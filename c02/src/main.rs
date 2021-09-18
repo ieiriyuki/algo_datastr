@@ -1,4 +1,4 @@
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 fn main() {
     println!("Hello, world!");
@@ -11,6 +11,7 @@ fn main() {
     println!("{}", q02_3(998244353));
 }
 
+#[allow(unused_variables)]
 fn q02_2(n: i32) {
     // O(N^3) の計算量なはず
     let start = Instant::now();
