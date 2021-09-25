@@ -26,6 +26,15 @@ fn main() {
     println!("{}", q04_5(1000));
     println!("{}", q04_5(10000));
 
+    println!("\nquestion 4.5");
+    let a = [2, 2, 4, 4];
+    let n = a.len();
+    let w = 8;
+    let mut mem; //vector の vector を作りたい
+    println!("{}", q04_6(a.len(), 8, &a, &mut mem));
+    let a = [1, 1, 2, 3, 5, 8, 13];
+    let mut mem: Vec<bool> = Vec::new();
+    println!("{}", q04_6(a.len(), 17, &a, &mut mem));
 }
 
 fn q04_1(n: u32) -> u32 {
@@ -82,7 +91,7 @@ fn q04_5(k: u32) -> u32 {
             for y in j.into_iter() {
                 numbers_to_pick.push(*y);
             }
-            println!("{:?}", numbers_to_pick);
+            //println!("{:?}", numbers_to_pick);
 
             // 数字を並び変えて, 数値をつくる
             for y in numbers_to_pick.iter().permutations(3 + i as usize) {
@@ -95,27 +104,34 @@ fn q04_5(k: u32) -> u32 {
                     count += 1;
                 }
             }
-
         }
-
     }
-
     return count
 }
 
-fn q04_6(i: usize, w: u32, a: &[u32]) -> bool {
+fn q04_6(i: usize, w: i32, a: &[i32], mem: &mut Vec<bool>) -> bool {
+    // imperfect implimentation, this does not work
+    println!("{:?}", mem); // 一次元ではだめ
+    if mem.len() > i {
+        return mem[i]
+    }
     if i == 0 {
         if w == 0 {
+            mem.push(true);
             return true
         } else {
+            mem.push(false);
             return false
         }
     }
-    if q04_6(i - 1, w, a) {
+    if q04_6(i - 1, w, a, mem) {
+        mem.push(true);
         return true
     }
-    if q04_6(i - 1, w - a[i as usize - 1], a) {
+    if q04_6(i - 1, w - a[i - 1], a, mem) {
+        mem.push(true);
         return true
     }
+    mem.push(false);
     return false
 }
