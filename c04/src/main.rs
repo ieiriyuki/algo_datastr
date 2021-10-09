@@ -28,9 +28,7 @@ fn main() {
 
     println!("\nquestion 4.5");
     let a = [2, 2, 4, 4];
-    let n = a.len();
-    let w = 8;
-    let mut mem; //vector の vector を作りたい
+    let mut mem: Vec<bool> = vec![]; //vector の vector を作りたい
     println!("{}", q04_6(a.len(), 8, &a, &mut mem));
     let a = [1, 1, 2, 3, 5, 8, 13];
     let mut mem: Vec<bool> = Vec::new();
