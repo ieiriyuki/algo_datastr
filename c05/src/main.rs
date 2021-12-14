@@ -10,6 +10,7 @@ fn main() {
     println!("{}", &code5_8("hello".to_string(), "hello".to_string()));
     println!("{}", &code5_8("atgc".to_string(), "tgct".to_string()));
 
+    println!("question 5-1");
     let ans: i32 = q05_1(2, &[10, 20, 30], &[40, 50, 60], &[70, 1000, 90]);
     println!("{}", ans);
 
@@ -23,6 +24,15 @@ fn main() {
         &[8, 3, 2, 6, 8, 4, 1],
     );
     println!("{}", ans);
+
+    println!("question 5-2");
+    let a: Vec<i32> = vec![1, 2, 3, 4, 5];
+    println!("{}", q05_2(10, &a));
+    let a: Vec<i32> = vec![3, 3, 3, 3, 3];
+    println!("{}", q05_2(11, &a));
+    let a: Vec<i32> = vec![1, 2, 3, 5, 8, 13];
+    println!("{}", q05_2(11, &a));
+    println!("{}", q05_2(31, &a));
 }
 
 fn code5_1(h: &Vec<f64>) -> f64 {
@@ -81,30 +91,50 @@ fn code5_8(s: String, t: String) -> i32 {
     return dp[s_vec.len()][t_vec.len()]
 }
 
-fn q05_1(N: usize, a: &[i32], b: &[i32], c: &[i32]) -> i32{
-    let mut gain: Vec<Vec<i32>> = vec![vec![0; 3]; N];
-    for i in 0..N {
+fn q05_1(n: usize, a: &[i32], b: &[i32], c: &[i32]) -> i32{
+    /* this code is imperfect */
+    let mut gain: Vec<Vec<i32>> = vec![vec![0; 3]; n];
+    if a.len() > b.len() && c.len() < 100 { () }
+    gain[0][0] = 0;
+    for i in 0..n {
         for j in 0..3 {
-            gain_i[i][j] = temp;
-            gain_i[i][1] = activity;
-        }
-        else {
-            let mut temp = gain_i[i -1][0] + a[i];
-            let mut activity = 0;
-            if (temp < gain_i[i -1][0] + b[i])
-                && (gain_i[i -1][1] != 1) {
-                temp = gain_i[i -1][0] + b[i];
-                activity = 1;
-            }
-            if (temp < gain_i[i -1][0] + c[i])
-                && (gain_i[i -1][1] != 2) {
-                temp = gain_i[i -1][0] + c[i];
-                activity = 2;
-            }
-            gain_i[i][0] = temp;
-            gain_i[i][1] = activity;
+            if i > j { () }
         }
     }
-    println!("{:?}", gain_i);
-    gain_i[N-1][0]
+    1
+}
+
+fn q05_2(w: i32, a: &Vec<i32>) -> bool {
+    let w_usize = (w + 1) as usize;
+    let mut dp: Vec<Vec<bool>> = vec![vec![false; w_usize]; a.len()];
+
+    dp[0][0] = true;  // nothing is added
+    for j in 1..w_usize {
+        if j == a[0] as usize {
+            dp[0][j] = true;
+        } else {
+            dp[0][j] = false;
+        }
+    }
+    for i in 1..a.len() {
+        dp[i][0] = true;  // still nothing is added
+        for j in 1..w_usize {
+            if a[i] < j as i32 {
+                if dp[i - 1][j - a[i] as usize] {
+                    dp[i][j] = true;  // addition makes j
+                } else {
+                    dp[i][j] = false;
+                }
+            } else if a[i] == j as i32 {
+                dp[i][j] = true;
+            } else {
+                if dp[i - 1][j] {
+                    dp[i][j] = true;  // already j
+                } else {
+                    dp[i][j] = false;
+                }
+            }
+        }
+    }
+    dp[a.len() - 1][w_usize - 1]
 }
