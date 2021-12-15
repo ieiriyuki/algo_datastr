@@ -159,14 +159,19 @@ fn q05_3(w: i32, a: &Vec<i32>) -> i32 {
     }
     for i in 1..a.len() {
         for j in 1..=w_usize {
-            // a[i]を足さない場合
+            // a[i]を足さなくてもj以下の値ができている場合がある
             dp[i][j - 1] += dp[i - 1][j - 1];
 
             // a[i]を足す場合
             if a[i] as usize <= j {
+                // 0に足す
                 dp[i][j - 1] += 1;
-                if a[i] as usize + j <= w_usize {
-                    dp[i][j - 1] += 1;
+
+                // 既存の部分和に足す
+                if (a[i] as usize) < j {
+                    if dp[i - 1][j - 1 - a[i] as usize] > 0 {
+                        dp[i][j - 1] += 1;
+                    }
                 }
             }
         }
