@@ -33,6 +33,14 @@ fn main() {
     let a: Vec<i32> = vec![1, 2, 3, 5, 8, 13];
     println!("{}", q05_2(11, &a));
     println!("{}", q05_2(31, &a));
+
+    println!("question 5-3");
+    let a: Vec<i32> = vec![2, 3, 5];
+    assert_eq!(3, q05_3(5, &a));
+    let a: Vec<i32> = vec![2, 4, 5];
+    assert_eq!(3, q05_3(5, &a));
+    let a: Vec<i32> = vec![2, 4, 5];
+    assert_eq!(4, q05_3(6, &a));
 }
 
 fn code5_1(h: &Vec<f64>) -> f64 {
@@ -136,5 +144,33 @@ fn q05_2(w: i32, a: &Vec<i32>) -> bool {
             }
         }
     }
+    dp[a.len() - 1][w_usize - 1]
+}
+
+// incomplete
+fn q05_3(w: i32, a: &Vec<i32>) -> i32 {
+    let w_usize = w as usize;
+    let mut dp: Vec<Vec<i32>> = vec![vec![0; w_usize]; a.len()];
+
+    for j in 1..=w_usize {
+        if a[0] as usize <= j {
+            dp[0][j - 1] += 1;
+        }
+    }
+    for i in 1..a.len() {
+        for j in 1..=w_usize {
+            // a[i]を足さない場合
+            dp[i][j - 1] += dp[i - 1][j - 1];
+
+            // a[i]を足す場合
+            if a[i] as usize <= j {
+                dp[i][j - 1] += 1;
+                if a[i] as usize + j <= w_usize {
+                    dp[i][j - 1] += 1;
+                }
+            }
+        }
+    }
+    println!("{:?}", dp);
     dp[a.len() - 1][w_usize - 1]
 }
