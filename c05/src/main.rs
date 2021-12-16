@@ -147,13 +147,12 @@ fn q05_2(w: i32, a: &Vec<i32>) -> bool {
     dp[a.len() - 1][w_usize - 1]
 }
 
-// still incomplete, checked answer
 fn q05_3(w: i32, a: &Vec<i32>) -> i32 {
     let w_usize = w as usize;
     let mut dp: Vec<Vec<bool>> = vec![vec![false; w_usize]; a.len()];
 
     for j in 1..=w_usize {
-        if a[0] as usize <= j {
+        if a[0] as usize == j {
             dp[0][j - 1] = true;
         }
     }
@@ -164,7 +163,7 @@ fn q05_3(w: i32, a: &Vec<i32>) -> i32 {
                 dp[i][j - 1] = true;
             } else {
                 // a[i]を足す場合
-                if a[i] as usize <= j {
+                if a[i] as usize == j {
                     // 0に足す
                     dp[i][j - 1] = true;
                 }
