@@ -147,35 +147,40 @@ fn q05_2(w: i32, a: &Vec<i32>) -> bool {
     dp[a.len() - 1][w_usize - 1]
 }
 
-// incomplete
+// still incomplete, checked answer
 fn q05_3(w: i32, a: &Vec<i32>) -> i32 {
     let w_usize = w as usize;
-    let mut dp: Vec<Vec<i32>> = vec![vec![0; w_usize]; a.len()];
+    let mut dp: Vec<Vec<bool>> = vec![vec![false; w_usize]; a.len()];
 
     for j in 1..=w_usize {
         if a[0] as usize <= j {
-            dp[0][j - 1] += 1;
+            dp[0][j - 1] = true;
         }
     }
     for i in 1..a.len() {
         for j in 1..=w_usize {
-            // a[i]を足さなくてもj以下の値ができている場合がある
-            dp[i][j - 1] += dp[i - 1][j - 1];
-
-            // a[i]を足す場合
-            if a[i] as usize <= j {
-                // 0に足す
-                dp[i][j - 1] += 1;
-
+            if dp[i - 1][j - 1] {
+                // a[i]を足さなくてもj以下の値ができている場合がある
+                dp[i][j - 1] = true;
+            } else {
+                // a[i]を足す場合
+                if a[i] as usize <= j {
+                    // 0に足す
+                    dp[i][j - 1] = true;
+                }
                 // 既存の部分和に足す
-                if (a[i] as usize) < j {
-                    if dp[i - 1][j - 1 - a[i] as usize] > 0 {
-                        dp[i][j - 1] += 1;
-                    }
+                if a[i] as usize <= j - 1 && dp[i][j - 1 - a[i] as usize]{
+                    dp[i][j - 1] = true;
                 }
             }
         }
     }
     println!("{:?}", dp);
-    dp[a.len() - 1][w_usize - 1]
+    let mut n_comb: i32 = 0;
+    for j in 1..=w_usize {
+        if dp[a.len() - 1][j - 1] {
+            n_comb += 1;
+        }
+    }
+    n_comb
 }
