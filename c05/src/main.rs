@@ -41,6 +41,15 @@ fn main() {
     assert_eq!(3, q05_3(5, &a));
     let a: Vec<i32> = vec![2, 4, 5];
     assert_eq!(4, q05_3(6, &a));
+
+    println!("question 5-4");
+    let a: Vec<i32> = vec![2, 4, 5];
+    println!("{:?}", q05_4(4, &a));
+    println!("{:?}", q05_4(6, &a));
+    println!("{:?}", q05_4(11, &a));
+    println!("{:?}", q05_4(11, &a));
+    let a: Vec<i32> = vec![6, 8, 11, 9];
+    println!("{:?}", q05_4(17, &a));
 }
 
 fn code5_1(h: &Vec<f64>) -> f64 {
@@ -182,4 +191,24 @@ fn q05_3(w: i32, a: &Vec<i32>) -> i32 {
         }
     }
     n_comb
+}
+
+fn q05_4(w: i32, a: &Vec<i32>) -> i32 {
+    let w_usize = (w + 1) as usize;
+    let mut dp: Vec<Vec<i32>> = vec![vec![0; w_usize]; a.len() + 1];
+
+    for i in 0..a.len() {
+        for j in 1..w_usize {
+            if dp[i][j] > 0 {
+                dp[i + 1][j] = dp[i][j];
+            } else if a[i] as usize == j {
+                dp[i + 1][j] += 1;
+            } else if a[i] as usize <= j && 0 < dp[i][j - a[i] as usize] {
+                dp[i + 1][j] = dp[i][j - a[i] as usize] + 1;
+            }
+        }
+    }
+
+    println!("{:?}", dp);
+    dp[a.len()][w_usize - 1]
 }
