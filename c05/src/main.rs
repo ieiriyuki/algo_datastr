@@ -50,6 +50,13 @@ fn main() {
     println!("{:?}", q05_4(11, &a));
     let a: Vec<i32> = vec![6, 8, 11, 9];
     println!("{:?}", q05_4(17, &a));
+
+    println!("question 5-5");
+    let a: Vec<i32> = vec![6, 8, 11, 9, 5];
+    println!("{:?}", q05_5(28, &a));
+    println!("{:?}", q05_5(7, &a));
+    let a: Vec<i32> = vec![4, 5];
+    println!("{:?}", q05_5(19, &a));
 }
 
 fn code5_1(h: &Vec<f64>) -> f64 {
@@ -210,5 +217,24 @@ fn q05_4(w: i32, a: &Vec<i32>) -> i32 {
     }
 
     println!("{:?}", dp);
+    dp[a.len()][w_usize - 1]
+}
+
+fn q05_5(w: i32, a: &Vec<i32>) -> bool {
+    let w_usize = (w + 1) as usize;
+    let mut dp: Vec<Vec<bool>> = vec![vec![false; w_usize]; a.len() + 1];
+
+    for i in 0..a.len() {
+        for j in 1..w_usize {
+            if dp[i][j] {
+                dp[i + 1][j] = true;
+            } else if j % a[i] as usize == 0 {
+                dp[i + 1][j] = true;
+            } else if (a[i] as usize) < j && dp[i + 1][j - a[i] as usize] {
+                dp[i + 1][j] = true;
+            }
+        }
+    }
+
     dp[a.len()][w_usize - 1]
 }
