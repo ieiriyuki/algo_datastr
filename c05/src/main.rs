@@ -57,6 +57,12 @@ fn main() {
     println!("{:?}", q05_5(7, &a));
     let a: Vec<i32> = vec![4, 5];
     println!("{:?}", q05_5(19, &a));
+
+    println!("question 5-7");
+    let s: &str = "charlesdarwin";
+    let t: &str = "richardwallace";
+    println!("{}", q05_7(s, t))
+
 }
 
 fn code5_1(h: &Vec<f64>) -> f64 {
@@ -237,4 +243,30 @@ fn q05_5(w: i32, a: &Vec<i32>) -> bool {
     }
 
     dp[a.len()][w_usize - 1]
+}
+
+fn q05_7(s: &str, t: &str) -> String {
+    let s_vec: Vec<char> = s.to_string().chars().collect();
+    let t_vec: Vec<char> = t.to_string().chars().collect();
+    let mut dp: Vec<Vec<String>> = vec![vec!["".to_string(); t_vec.len() + 1]; s_vec.len() + 1];
+
+    println!("{:?}\n{:?}", s_vec, t_vec);
+    for i in 0..s_vec.len() {
+        for j in 0..t_vec.len() {
+            if s_vec[i] == t_vec[j] {
+                let mut temp = dp[i][j].clone();
+                temp.push(s_vec[i]);
+                dp[i + 1][j + 1].push_str(&temp);
+            } else {
+                dp[i + 1][j + 1] = dp[i][j].clone();
+                if dp[i][j + 1].len() < dp[i][j].len() {
+                    dp[i][j + 1] = dp[i][j].clone();
+                }
+                if dp[i + 1][j].len() < dp[i][j].len() {
+                    dp[i + 1][j] = dp[i][j].clone();
+                }
+            }
+        }
+    }
+    dp[s_vec.len()][t_vec.len()].clone()
 }
