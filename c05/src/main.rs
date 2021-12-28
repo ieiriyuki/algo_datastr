@@ -61,7 +61,11 @@ fn main() {
     println!("question 5-7");
     let s: &str = "charlesdarwin";
     let t: &str = "richardwallace";
-    println!("{}", q05_7(s, t))
+    println!("{}", q05_7(s, t));
+
+    println!("question 5-8");
+    let a: Vec<i32> = vec![13, 21, 34, 55, 89, 144, 233, 377];
+    println!("{}", q05_8(3, &a));
 
 }
 
@@ -250,7 +254,6 @@ fn q05_7(s: &str, t: &str) -> String {
     let t_vec: Vec<char> = t.to_string().chars().collect();
     let mut dp: Vec<Vec<String>> = vec![vec!["".to_string(); t_vec.len() + 1]; s_vec.len() + 1];
 
-    println!("{:?}\n{:?}", s_vec, t_vec);
     for i in 0..s_vec.len() {
         for j in 0..t_vec.len() {
             if s_vec[i] == t_vec[j] {
@@ -269,4 +272,38 @@ fn q05_7(s: &str, t: &str) -> String {
         }
     }
     dp[s_vec.len()][t_vec.len()].clone()
+}
+
+// incomplete
+fn q05_8(m: i32, a: &Vec<i32>) -> f64 {
+    let a_usize = a.len() + 1 as usize;
+    let mut dp: Vec<Vec<f64>> = vec![vec![0.; 1 + m as usize]; a_usize];
+    let mut avg: Vec<Vec<f64>> = vec![vec![0.; a_usize]; a_usize];
+    for i in 1..a_usize {
+        for j in 0..i {
+            let mut sum = 0.;
+            for k in j..i {
+                sum += a[k] as f64;
+            }
+            let num = (i - j) as f64;
+            avg[i][j] = sum / num;
+        }
+    }
+
+    for i in 1..a_usize {
+        for j in 0..i {
+            for k in 1..=m as usize {
+                if dp[i][k] <= dp[j][k-1] + avg[j][i] {
+                    dp[i][k] = dp[j][k-1] + avg[j][i];
+                }
+            }
+        }
+    }
+    let mut result = -1. * 2f64.powf(60.);
+    for x in 0..=m as usize {
+        if dp[a_usize - 1][x] >= result {
+            result = dp[a_usize - 1][x];
+        }
+    }
+    result
 }
