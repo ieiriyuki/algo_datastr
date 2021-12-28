@@ -274,10 +274,10 @@ fn q05_7(s: &str, t: &str) -> String {
     dp[s_vec.len()][t_vec.len()].clone()
 }
 
-// incomplete
+// できた?
 fn q05_8(m: i32, a: &Vec<i32>) -> f64 {
     let a_usize = a.len() + 1 as usize;
-    let mut dp: Vec<Vec<f64>> = vec![vec![0.; 1 + m as usize]; a_usize];
+    let mut dp: Vec<Vec<f64>> = vec![vec![-1.; 1 + m as usize]; a_usize];
     let mut avg: Vec<Vec<f64>> = vec![vec![0.; a_usize]; a_usize];
     for i in 1..a_usize {
         for j in 0..i {
@@ -286,14 +286,14 @@ fn q05_8(m: i32, a: &Vec<i32>) -> f64 {
                 sum += a[k] as f64;
             }
             let num = (i - j) as f64;
-            avg[i][j] = sum / num;
+            avg[j][i] = sum / num;
         }
     }
 
     for i in 1..a_usize {
         for j in 0..i {
             for k in 1..=m as usize {
-                if dp[i][k] <= dp[j][k-1] + avg[j][i] {
+                if dp[i][k] < dp[j][k-1] + avg[j][i] {
                     dp[i][k] = dp[j][k-1] + avg[j][i];
                 }
             }
