@@ -67,6 +67,9 @@ fn main() {
     let a: Vec<i32> = vec![13, 21, 34, 55, 89, 144, 233, 377];
     println!("{}", q05_8(3, &a));
 
+    println!("question 5-9");
+    let a: Vec<f64> = vec![13., 21., 34., 55., 89., 144., 233., 377.];
+    println!("{}", q05_9(&a));
 }
 
 fn code5_1(h: &Vec<f64>) -> f64 {
@@ -306,4 +309,29 @@ fn q05_8(m: i32, a: &Vec<i32>) -> f64 {
         }
     }
     result
+}
+
+// 回答のパクリ, 完全に理解した()
+fn q05_9(a: &Vec<f64>) -> f64 {
+    let mut accum_sum: Vec<f64> = vec![0.; a.len() + 1];
+    for i in 1..=a.len() {
+        accum_sum[i] = accum_sum[i - 1] + a[i - 1];
+    }
+
+    let _inf = 1f64.powf(60.);
+    let mut dp: Vec<Vec<f64>> = vec![vec![_inf; a.len() + 1]; a.len() + 1];
+    for i in 0..a.len() {
+        dp[i][i + 1] = 0.;
+    }
+    for bet in 2..=a.len() {
+        for i in 0..=(a.len() - bet) {
+            let j = i + bet;
+            for k in (i + 1)..j {
+                if dp[i][j] < dp[i][k] + dp[k][j] + accum_sum[j] - accum_sum[i] {
+                    dp[i][j] = dp[i][k] + dp[k][j] + accum_sum[j] - accum_sum[i];
+                }
+            }
+        }
+    }
+    dp[0][a.len()]
 }
