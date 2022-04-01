@@ -21,7 +21,16 @@ fn main() {
     println!("{}", lower_bound(0, &vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
     println!("{}", lower_bound(-9, &vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
 
+    println!("example 6-5");
+    let a: Vec<i32> = vec![1, 2, 3, 4, 5];
+    let b: Vec<i32> = vec![1, 2, 3, 4, 5];
+    println!("{}", c06_5(&a, &b));
+    let a: Vec<i32> = vec![1; 5];
+    let b: Vec<i32> = vec![1; 5];
+    println!("{}", c06_5(&a, &b));
+
     println!("question 6-1");
+    let a = vec![1, 2, 3, 4, 5];
     println!("{}", q06_1(9, &a));
 }
 
@@ -102,6 +111,37 @@ fn lower_bound(key: i32, b: &Vec<i32>) -> i32 {
         }
     }
     return b_[right]
+}
+
+fn c06_5 (h: &Vec<i32>, s: &Vec<i32>) -> usize {
+    if h.len() != s.len() { panic!("lengths are different! {} != {}", h.len(), s.len()) }
+    let inf_: usize = 1 << 30;
+    let mut left: usize = 0;
+    let mut right = inf_;
+
+    while right - left > 1 {
+        let mut mid = (left + right) / 2;
+        let mut is_ok = true;
+        let mut t: Vec<i32> = vec![0; h.len()];
+
+        for i in 0..h.len() {
+            if h[i] > mid as i32 {
+                is_ok = false;
+            } else {
+                t[i] = (mid as i32 - h[i]) / s[i];
+            }
+        }
+        t.sort();
+        for i in 0..h.len() {
+            if t[i] < i as i32 { is_ok = false; }
+        }
+        if is_ok {
+            right = mid;
+        } else {
+            left = mid;
+        }
+    }
+    return right
 }
 
 fn q06_1 (key: i32, a: &Vec<i32>) -> usize {
