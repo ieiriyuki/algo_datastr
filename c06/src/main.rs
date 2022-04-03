@@ -18,6 +18,19 @@ fn main() {
     let b = vec![10, 11, 12, 13, 14];
     let c = vec![0, 1, 2, 3, 4];
     assert_eq!(0, q06_2(&a, &b, &c));
+
+    println!("question 6-3");
+    let a = vec![1, 2];
+    assert_eq!(-1, q06_3(0, &a));
+    let a = vec![3, 2];
+    assert_eq!(-1, q06_3(3, &a));
+    let a = vec![1, 0];
+    println!("{}", q06_3(5, &a));
+    let a = vec![2, 1];
+    println!("{}", q06_3(6, &a));
+    let a = vec![3, 5];
+    println!("{}", q06_3(13, &a));
+    println!("{}", q06_3(15, &a));
 }
 
 fn q06_1 (a: &Vec<i32>) -> Vec<usize> {
@@ -108,4 +121,51 @@ fn lower_bound_index(key: i32, x: &Vec<i32>) -> i32 {
         }
     }
     return right as i32
+}
+
+fn q06_3(m: i32, a: &Vec<i32>) -> i32 {
+    let mut a_ = a.clone();
+    a_.sort();
+    if m < a_[0] {
+        println!("None of a[i] is less than m. {} < {}", m, a_[0]);
+        return -1
+    }
+    let mut sums = vec![0; a_.len() * a_.len()];
+
+    for i in 0..a_.len() {
+        for j in 0..a_.len() {
+            sums[i * a_.len() + j] = a_[i] + a_[j];
+        }
+    }
+    if m < sums[0] {
+        println!("No combination of a[i] is less than {}. minimum = {}", m, sums[0]);
+        return -1
+    }
+
+    let mut maximum: i32 = 0;
+    for i in 0..a_.len() {
+        for j in 0..a_.len() {
+            let sum_of_two_1 = sums[i * a_.len() + j];
+            let criterion = m - sum_of_two_1;
+            let mut left = 0;
+            let mut right = a_.len() * a_.len() - 1;
+            while left < right {
+                let mid = (left + right) / 2;
+                println!("{},{},{},{}", left, mid, right, criterion);
+                if criterion == sums[mid] {
+                    left = mid;
+                    right = mid;
+                } else if criterion < sums[mid] {
+                    right = mid;
+                } else {
+                    left = mid;
+                }
+            }
+            let sum_of_two_2 = sums[left];
+            if maximum < sum_of_two_1 + sum_of_two_2 {
+                maximum = sum_of_two_1 + sum_of_two_2;
+            }
+        }
+    }
+    return maximum
 }
