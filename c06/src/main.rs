@@ -47,6 +47,29 @@ fn main() {
     let c = vec![0, 1, 2, 3, 4];
     assert_eq!(0, q06_2(&a, &b, &c));
 
+    let c = vec![1, 2, 3, 5, 7];
+    match upper_bound(0, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+    match upper_bound(4, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+    let c = vec![6, 8, 8, 10];
+    match upper_bound(7, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+    match upper_bound(5, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+    match upper_bound(7, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+
     println!("question 6-3");
     let a = vec![1, 2];
     assert_eq!(-1, q06_3(0, &a));
@@ -147,7 +170,7 @@ fn c06_5 (h: &Vec<i32>, s: &Vec<i32>) -> usize {
     let mut right = inf_;
 
     while right - left > 1 {
-        let mut mid = (left + right) / 2;
+        let mid = (left + right) / 2;
         let mut is_ok = true;
         let mut t: Vec<i32> = vec![0; h.len()];
 
@@ -275,35 +298,46 @@ fn q06_3(m: i32, a: &Vec<i32>) -> i32 {
             sums[i * a_.len() + j] = a_[i] + a_[j];
         }
     }
+    sums.sort();
     if m < sums[0] {
         println!("No combination of a[i] is less than {}. minimum = {}", m, sums[0]);
         return -1
     }
+    println!("{:?}", sums);
 
     let mut maximum: i32 = 0;
     for i in 0..a_.len() {
         for j in 0..a_.len() {
             let sum_of_two_1 = sums[i * a_.len() + j];
             let criterion = m - sum_of_two_1;
-            let mut left = 0;
-            let mut right = a_.len() * a_.len() - 1;
-            while left < right {
-                let mid = (left + right) / 2;
-                println!("{},{},{},{}", left, mid, right, criterion);
-                if criterion == sums[mid] {
-                    left = mid;
-                    right = mid;
-                } else if criterion < sums[mid] {
-                    right = mid;
-                } else {
-                    left = mid;
-                }
-            }
-            let sum_of_two_2 = sums[left];
+            let sum_of_two_2 = match upper_bound(criterion, &sums) {
+                Ok(idx) => sums[idx],
+                Err(_) => 0
+            };
             if maximum < sum_of_two_1 + sum_of_two_2 {
                 maximum = sum_of_two_1 + sum_of_two_2;
             }
         }
     }
     return maximum
+}
+
+fn upper_bound(key: i32, x: &Vec<i32>) -> Result<usize, i32> {
+    let mut left: usize = 0;
+    let mut right = x.len() - 1;
+    if key < x[left] {
+        return Err(-1)
+    }
+    while left + 1 < right {
+        let mid = (left + right) / 2;
+        if x[mid] == key {
+            left = mid;
+            right = mid;
+        } else if key < x[mid] {
+            right = mid - 1;
+        } else {
+            left = mid;
+        }
+    }
+    return Ok(left)
 }
