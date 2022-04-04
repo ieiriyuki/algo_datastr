@@ -105,6 +105,14 @@ fn main() {
     let a = vec![3, 5];
     println!("{}", q06_3(13, &a));
     println!("{}", q06_3(15, &a));
+
+    println!("question 6-4");
+    println!("{}", q06_4(1, &vec![0, 1, 2, 3]).expect_err("will err"));
+    println!("{}", q06_4(2, &vec![0]).expect_err("short vector"));
+    println!("{}", q06_4(2, &vec![1, 3]).unwrap());
+    let a = vec![0, 10, 30, 55, 70, 85, 100];
+    println!("{}", q06_4(4, &a).unwrap());
+
 }
 
 fn c06_1(key: i32, a: &Vec<i32>) -> i32 {
@@ -363,4 +371,41 @@ fn upper_bound(key: i32, x: &Vec<i32>) -> Result<usize, i32> {
         }
     }
     return Ok(right)
+}
+
+fn q06_4 (m: i32, a: &Vec<i32>) -> Result<i32, i32> {
+    // 上のほう以外は回答の模写
+    if m < 2 {
+        println!("m should be >= 2");
+        return Err(-1)
+    }
+    if a.len() < 2 {
+        println!("vector length should be >= 2");
+        return Err(-1)
+    }
+    if m == 2 {
+        return Ok(a[a.len() - 1] - a[0])
+    }
+    let mut a_ = a.clone();
+    a_.sort();
+
+    let mut left = 0;
+    let mut right = 1 << 30;
+    while left + 1 < right {
+        let mid = (left + right) / 2;
+        let mut count = 1;
+        let mut prev: usize = 0;
+        for i in 1..a_.len() {
+            if mid <= (a_[i] - a[prev]) {
+                count += 1;
+                prev = i;
+            }
+        }
+        if count >= m {
+            left = mid;
+        } else {
+            right = mid;
+        }
+    }
+    return Ok(left)
 }
