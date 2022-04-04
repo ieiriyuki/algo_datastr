@@ -47,12 +47,21 @@ fn main() {
     let c = vec![0, 1, 2, 3, 4];
     assert_eq!(0, q06_2(&a, &b, &c));
 
-    let c = vec![1, 2, 3, 5, 7];
+    println!("test upper_bound");
+    let c = vec![1, 3, 3, 5, 7];
     match upper_bound(0, &c) {
         Ok(idx) => println!("success: {}", idx),
         Err(num) => println!("fail: {}", num)
     };
     match upper_bound(4, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+    match upper_bound(2, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+    match upper_bound(8, &c) {
         Ok(idx) => println!("success: {}", idx),
         Err(num) => println!("fail: {}", num)
     };
@@ -66,6 +75,20 @@ fn main() {
         Err(num) => println!("fail: {}", num)
     };
     match upper_bound(7, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+    println!("even length");
+    let c = vec![2, 3, 3, 4];
+    match upper_bound(4, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+    match upper_bound(3, &c) {
+        Ok(idx) => println!("success: {}", idx),
+        Err(num) => println!("fail: {}", num)
+    };
+    match upper_bound(2, &c) {
         Ok(idx) => println!("success: {}", idx),
         Err(num) => println!("fail: {}", num)
     };
@@ -328,16 +351,16 @@ fn upper_bound(key: i32, x: &Vec<i32>) -> Result<usize, i32> {
     if key < x[left] {
         return Err(-1)
     }
-    while left + 1 < right {
+    while left <= right {
         let mid = (left + right) / 2;
         if x[mid] == key {
-            left = mid;
+            left = mid + 1;
             right = mid;
         } else if key < x[mid] {
             right = mid - 1;
         } else {
-            left = mid;
+            left = mid + 1;
         }
     }
-    return Ok(left)
+    return Ok(right)
 }
