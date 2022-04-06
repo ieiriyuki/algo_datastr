@@ -132,6 +132,9 @@ fn main() {
     println!("{}", q06_6(99, 1, 1));
     println!("{}", q06_6(110, 10, 1));
 
+    println!("question 6-7");
+    let a = vec![1, 2, 3];
+    println!("{}", q06_7(&a));
 }
 
 fn c06_1(key: i32, a: &Vec<i32>) -> i32 {
@@ -496,4 +499,22 @@ fn q06_6(a: i32, b: i32, c: i32) -> f64 {
         }
     }
     return left
+}
+
+fn q06_7(a_: &Vec<i32>) -> i32 {
+    let mut a = a_.clone();
+    a.sort();
+
+    let mut left = 0;
+    let mut right = 1 << 30;
+    while left + 1 < right {
+        let mid = (left + right) / 2;
+
+        if true {
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+    return 1
 }
