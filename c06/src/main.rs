@@ -441,7 +441,6 @@ fn q06_5(k: usize, a_: &Vec<i32>, b_: &Vec<i32>) -> Result<usize, i32> {
     while left + 1 < right {
         let mid = (left + right) / 2;
         let mut count = 0;
-        let mut is_ok = true;
 
         for i in 0..n {
 
@@ -451,16 +450,15 @@ fn q06_5(k: usize, a_: &Vec<i32>, b_: &Vec<i32>) -> Result<usize, i32> {
                 let mid_2 = (left_2 + right_2) / 2;
                 if a[i] * b[mid_2] < (mid as i32) {
                     count += 1;
-                    if k <= count {
-                        is_ok = false;
-                    }
                     left_2 = mid_2 + 1;
                 } else {
                     right_2 = mid_2;
                 }
             }
+            count += left_2;
         }
-        if is_ok {
+
+        if k <= count {
             left = mid;
         } else {
             right = mid;
