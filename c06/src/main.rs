@@ -113,6 +113,19 @@ fn main() {
     let a = vec![0, 10, 30, 55, 70, 85, 100];
     println!("{}", q06_4(4, &a).unwrap());
 
+    println!("question 6-5");
+    let a = vec![1, 2, 3, 31, 32, 33];
+    let b = vec![5, 7, 11, 13, 101, 199, 0];
+    println!("will fail: {}", q06_5(1, &a, &b).expect_err(""));
+    let a = vec![1, 5];
+    let b = vec![2, 3];
+    println!("{}", q06_5(1, &a, &b).unwrap());
+    println!("{}", q06_5(2, &a, &b).unwrap());
+    println!("{}", q06_5(3, &a, &b).unwrap());
+    let a = vec![1, 7, 11];
+    let b = vec![2, 3, 13];
+    println!("{}", q06_5(1, &a, &b).unwrap());
+
 }
 
 fn c06_1(key: i32, a: &Vec<i32>) -> i32 {
@@ -402,6 +415,52 @@ fn q06_4 (m: i32, a: &Vec<i32>) -> Result<i32, i32> {
             }
         }
         if count >= m {
+            left = mid;
+        } else {
+            right = mid;
+        }
+    }
+    return Ok(left)
+}
+
+fn q06_5(k: usize, a_: &Vec<i32>, b_: &Vec<i32>) -> Result<usize, i32> {
+    // Incomplete implementation, basic logic is correct
+
+    if a_.len() != b_.len() {
+        return Err(-1)
+    }
+
+    let mut a = a_.clone();
+    a.sort();
+    let mut b = b_.clone();
+    b.sort();
+    let n = a.len();
+
+    let mut left: usize = 0;
+    let mut right: usize = 1 << 30;
+    while left + 1 < right {
+        let mid = (left + right) / 2;
+        let mut count = 0;
+        let mut is_ok = true;
+
+        for i in 0..n {
+
+            let mut left_2: usize = 0;
+            let mut right_2: usize = n - 1;
+            while left_2 < right_2 {
+                let mid_2 = (left_2 + right_2) / 2;
+                if a[i] * b[mid_2] < (mid as i32) {
+                    count += 1;
+                    if k <= count {
+                        is_ok = false;
+                    }
+                    left_2 = mid_2 + 1;
+                } else {
+                    right_2 = mid_2;
+                }
+            }
+        }
+        if is_ok {
             left = mid;
         } else {
             right = mid;
