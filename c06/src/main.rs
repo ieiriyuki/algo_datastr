@@ -126,6 +126,12 @@ fn main() {
     let b = vec![2, 3, 13];
     println!("{}", q06_5(1, &a, &b).unwrap());
 
+    println!("question 6-6");
+    println!("{}", q06_6(1, 1, 1));
+    println!("{}", q06_6(53, 82, 49));
+    println!("{}", q06_6(99, 1, 1));
+    println!("{}", q06_6(110, 10, 1));
+
 }
 
 fn c06_1(key: i32, a: &Vec<i32>) -> i32 {
@@ -465,4 +471,29 @@ fn q06_5(k: usize, a_: &Vec<i32>, b_: &Vec<i32>) -> Result<usize, i32> {
         }
     }
     return Ok(left)
+}
+
+fn q06_6(a: i32, b: i32, c: i32) -> f64 {
+    use std::f64::consts::PI;
+    let calc = |a: i32, b: i32, c: i32, t: f64| {
+        (a as f64) * t + (b as f64) * ((c as f64) * t * PI).sin()
+    };
+
+    let mut left: f64 = 0.;
+    let mut right: f64 = 400.;
+    let mut is_close = false;
+    let eps = 1e-10;
+    while !is_close {
+        let mid: f64 = (left + right) / 2.;
+        let val = calc(a, b, c, mid);
+        if (val - 100.).abs() < eps {
+            is_close = true;
+            left = mid;
+        } else if 100. < val {
+            right = mid;
+        } else {
+            left = mid;
+        }
+    }
+    return left
 }
