@@ -18,6 +18,13 @@ fn main() {
     let a = vec![3, 4, 7, 9];
     let b = vec![2, 5, 7, 8];
     println!("{}", q07_1(&a, &b));
+
+    println!("question 7-2");
+    let r_x = vec![3, 4, 7, 9];
+    let r_y = r_x.clone();
+    let b_x = r_x.clone();
+    let b_y = vec![3, 4, 7, 9, 0];
+    println!("{:?}", q07_2(&r_x, &r_y, &b_x, &b_y).expect_err(""));
 }
 
 fn q07_1(_a: &Vec<i32>, _b: &Vec<i32>) -> i32 {
@@ -62,3 +69,17 @@ fn lower_bound(key: i32, _a: &Vec<i32>) -> Result<usize, i32> {
     }
     return Ok(left)
 }
+
+// skip
+fn q07_2(
+    _r_x: &Vec<i32>,
+    _r_y: &Vec<i32>,
+    _b_x: &Vec<i32>,
+    _b_y: &Vec<i32>,
+) -> Result<i32, ()> {
+    if _r_x.len() != _r_y.len() || _r_x.len() != _b_x.len() || _r_x.len() != _b_y.len() {
+        return Err(())
+    }
+    return Ok(1)
+}
+
