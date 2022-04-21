@@ -25,6 +25,14 @@ fn main() {
     let b_x = r_x.clone();
     let b_y = vec![3, 4, 7, 9, 0];
     println!("{:?}", q07_2(&r_x, &r_y, &b_x, &b_y).expect_err(""));
+
+    println!("question 7-3");
+    let d = vec![3, 4, 1, 4];
+    let t = vec![3, 6, 9, 12];
+    println!("{}", q07_3(&d, &t));
+    let d = vec![3, 4, 4, 1];
+    let t = vec![3, 12, 9, 6];
+    println!("{}", q07_3(&d, &t));
 }
 
 fn q07_1(_a: &Vec<i32>, _b: &Vec<i32>) -> i32 {
@@ -77,9 +85,46 @@ fn q07_2(
     _b_x: &Vec<i32>,
     _b_y: &Vec<i32>,
 ) -> Result<i32, ()> {
+    // xかyでソートしないとダメ
     if _r_x.len() != _r_y.len() || _r_x.len() != _b_x.len() || _r_x.len() != _b_y.len() {
         return Err(())
     }
     return Ok(1)
 }
 
+fn q07_3(_d: &Vec<i32>, _t: &Vec<i32>) -> bool {
+    if _d.len() != _t.len() {
+        panic!("lengths are different!")
+    }
+    // tでソートしないとダメ
+    let mut d = _d.clone();
+    let mut t = _t.clone();
+
+    let mut n_try: usize = 0;
+    let n_limit = d.len();
+    let mut t_cur: i32 = 0;
+    while n_try < n_limit {
+        n_try += 1;
+
+        let n_remain = d.len();
+        let mut i_to_remove: Vec<usize> = vec![];
+        for i in 0..n_remain {
+            println!("{} {} {} {} {}", n_try, i, t_cur, d[i], t[i]);
+            if t_cur + d[i] <= t[i] {
+                t_cur += d[i];
+                i_to_remove.push(i);
+            }
+        }
+        i_to_remove.reverse();
+        println!("{:?}", i_to_remove);
+        for i in 0..i_to_remove.len() {
+            d.remove(i_to_remove[i]);
+            t.remove(i_to_remove[i]);
+        }
+    }
+    if d.len() > 0 {
+        return false
+    } else {
+        return true
+    }
+}
