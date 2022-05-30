@@ -1,3 +1,5 @@
+use std::iter::zip;
+
 fn main() {
     println!("test lower bound");
     let a = vec![1, 3, 5, 7, 9];
@@ -20,11 +22,14 @@ fn main() {
     println!("{}", q07_1(&a, &b));
 
     println!("question 7-2");
-    let r_x = vec![3, 4, 7, 9];
+    let r_x = vec![7, 4, 3, 9];
     let r_y = r_x.clone();
     let b_x = r_x.clone();
     let b_y = vec![3, 4, 7, 9, 0];
     println!("{:?}", q07_2(&r_x, &r_y, &b_x, &b_y).expect_err(""));
+    let b_x = vec![8, 5, 6, 2];
+    let b_y = b_x.clone();
+    println!("{:?}", q07_2(&r_x, &r_y, &b_x, &b_y).unwrap());
 
     println!("question 7-3");
     let d = vec![3, 4, 1, 4];
@@ -85,11 +90,40 @@ fn q07_2(
     _b_x: &Vec<i32>,
     _b_y: &Vec<i32>,
 ) -> Result<i32, ()> {
-    // xかyでソートしないとダメ
     if _r_x.len() != _r_y.len() || _r_x.len() != _b_x.len() || _r_x.len() != _b_y.len() {
         return Err(())
     }
-    return Ok(1)
+    // xかつyでソート
+    let mut reds: Vec<_> = zip(_r_x, _r_y).map(|x| (*x.0, *x.1)).collect();
+    reds.sort_by(|x, y| x.0.cmp(&y.0).then(x.1.cmp(&y.1)));
+    let mut blues: Vec<_> = zip(_b_x, _b_y).map(|x| (*x.0, *x.1)).collect();
+    blues.sort_by(|x, y| x.0.cmp(&y.0).then(x.1.cmp(&y.1)));
+
+    // println!("{:?}", blues);
+    /* debug
+    for x in reds {
+        print_type(&x);
+        print_type(&x.0);
+    }
+    */
+    let mut counter = 0;
+    let mut j: usize = 0;
+    for i in 0..reds.len() {
+        while j < blues.len() {
+            if reds[i].0 < blues[j].0 && reds[i].1 < blues[j].1 {
+                counter += 1;
+                j += 1;
+                break
+            }
+            j += 1;
+        }
+    }
+    return Ok(counter);
+}
+
+#[allow(dead_code)]
+fn print_type<T>(_: &T) {
+    println!("{}", std::any::type_name::<T>())
 }
 
 fn q07_3(_d: &Vec<i32>, _t: &Vec<i32>) -> bool {
