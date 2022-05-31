@@ -131,34 +131,16 @@ fn q07_3(_d: &Vec<i32>, _t: &Vec<i32>) -> bool {
         panic!("lengths are different!")
     }
     // tでソートしないとダメ
-    let mut d = _d.clone();
-    let mut t = _t.clone();
+    let mut td: Vec<_> = zip(_t, _d).map(|x| (*x.0, *x.1)).collect();
+    td.sort_by(|x, y| x.0.cmp(&y.0));
 
-    let mut n_try: usize = 0;
-    let n_limit = d.len();
-    let mut t_cur: i32 = 0;
-    while n_try < n_limit {
-        n_try += 1;
-
-        let n_remain = d.len();
-        let mut i_to_remove: Vec<usize> = vec![];
-        for i in 0..n_remain {
-            println!("{} {} {} {} {}", n_try, i, t_cur, d[i], t[i]);
-            if t_cur + d[i] <= t[i] {
-                t_cur += d[i];
-                i_to_remove.push(i);
-            }
-        }
-        i_to_remove.reverse();
-        println!("{:?}", i_to_remove);
-        for i in 0..i_to_remove.len() {
-            d.remove(i_to_remove[i]);
-            t.remove(i_to_remove[i]);
+    //println!("{:?}", td);
+    let mut cur_time: i32 =0;
+    for i in 0..td.len() {
+        cur_time += td[i].1;
+        if td[i].0 < cur_time {
+            return false
         }
     }
-    if d.len() > 0 {
-        return false
-    } else {
-        return true
-    }
+    return true
 }
