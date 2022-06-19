@@ -28,6 +28,8 @@ fn main() {
     println!("n bridges: {}", q11_1(&a));
 
     println!("\nquestion 11-2");
+    do_q11_2();
+
 }
 
 fn q11_1(v_: &Vec<(usize, usize)>) -> i32 {
@@ -130,4 +132,72 @@ impl UnionFind {
         let root = self.root(x);
         self.siz[&root]
     }
+}
+
+fn do_q11_2() {
+    let a = vec![
+        (1, 2),
+        (3, 4),
+        (1, 3),
+        (2, 3),
+        (1, 4),
+    ];
+    println!("{:?}", q11_2(&a));
+    let a = vec![
+        (2, 3),
+        (1, 2),
+        (5, 6),
+        (3, 4),
+        (4, 5),
+    ];
+    println!("{:?}", q11_2(&a));
+    let a = vec![
+        (1, 2),
+        (2, 1),
+    ];
+    println!("{:?}", q11_2(&a));
+}
+
+fn q11_2(v_: &Vec<(usize, usize)>) {
+    let mut v_clean = v_.clone();
+    v_clean = clean_edges(v_clean);
+    let m = v_clean.len();
+    let n = get_num_of_elem(&v_clean);
+
+    for i in 1..m {
+        let mut v: Vec<(usize, usize)> = Vec::new();
+        for j in i..m {
+            v.push(v_[j]);
+        }
+        let mut uf = UnionFind::new(n);
+        for (a, b) in v.into_iter() {
+            uf.unite(a, b);
+        }
+
+        let mut n_inconv = 0;
+        for j in 1..n {
+            for k in j+1..=n {
+                if ! uf.issame(j, k) {
+                    n_inconv += 1;
+                }
+            }
+        }
+        println!("{}: {}", i, n_inconv);
+    }
+    println!("{}: {}", m, n * (n - 1) / 2);
+    ()
+}
+
+fn clean_edges(mut v: Vec<(usize, usize)>) -> Vec<(usize, usize)> {
+    for i in 0..v.len() {
+        if let Some(x) = v.pop() {
+            let (mut a, mut b) = x;
+            if a > b {
+                std::mem::swap(&mut a, &mut b);
+            }
+            v.push((a, b));
+        }
+    }
+    v.dedup();
+    v
 }
