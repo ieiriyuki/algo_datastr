@@ -30,6 +30,11 @@ fn main() {
     println!("\nquestion 11-2");
     do_q11_2();
 
+    println!("\nquestion 11-3 is skipped");
+    // 道路の連結探した後に、鉄道の連結を探す
+
+    println!("\nquestion 11-4 is skipped");
+    // https://qiita.com/drken/items/cce6fc5c579051e64fab
 }
 
 fn q11_1(v_: &Vec<(usize, usize)>) -> i32 {
