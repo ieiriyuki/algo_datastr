@@ -4,27 +4,27 @@ use std::collections::{BinaryHeap, HashMap};
 fn main() {
     do_training();
 
-    println!("question 11-1");
+    println!("question 12-1");
     let mut v = vec![8, 7, 6, 5, 4, 3, 2, 1];
-    q11_1(v);
+    q12_1(v);
 
-    println!("question 11-2");
+    println!("question 12-2");
     // Aでソートして小さい順にMになるまで買う
 
-    println!("question 11-3");
+    println!("question 12-3");
     // それまでの順番とk番目の値を保持して、追加されるたびに都度比較する
     let v = vec![8, 7, 6, 5, 4, 3, 2, 1];
-    q11_3(&v, 4);
+    q12_3(&v, 4);
 
-    // question 11-4
+    // question 12-4
     // 証明が面倒なので略
 
-    println!("question 11-5");
+    println!("question 12-5");
     // 順に要素を追加していく, その都度 k 番目に小さい値を保持・比較する
     let v = vec![8, 7, 6, 5, 4, 3, 2, 1];
-    println!("{}", q11_5(&v, 4));
+    println!("{}", q12_5(&v, 4));
 
-    // question 11-6
+    // question 12-6
     // ムズイ
 }
 
@@ -163,7 +163,7 @@ fn bucket_sort(mut v: Vec<i32>) -> Vec<i32> {
     return v2
 }
 
-fn q11_1(mut v: Vec<i32>) {
+fn q12_1(mut v: Vec<i32>) {
     let temp_v = v.clone();
     let n = temp_v.len();
     let sorted_v = merge_sort(v, 0, n);
@@ -176,7 +176,7 @@ fn q11_1(mut v: Vec<i32>) {
     }
 }
 
-fn q11_3(v: &Vec<i32>, k: usize) {
+fn q12_3(v: &Vec<i32>, k: usize) {
     let mut lowers = BinaryHeap::new();
     let mut highers = BinaryHeap::new();
     let mut counter = 0;
@@ -202,7 +202,7 @@ fn q11_3(v: &Vec<i32>, k: usize) {
 }
 
 
-fn q11_5(v: &Vec<i32>, k: usize) -> i32 {
+fn q12_5(v: &Vec<i32>, k: usize) -> i32 {
     let mut counter: usize = 0;
     let mut kth_smallest_value: i32 = -1 << 30;
     let mut prev_smallest_value: i32 = -1 << 30;
