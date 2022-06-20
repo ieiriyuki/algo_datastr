@@ -20,6 +20,12 @@ fn do_training() {
     println!("{:?}", heap_sort(v));
     let mut v = vec![8, 7, 6, 5, 4, 3, 2, 1].into_iter().rev().collect();
     println!("{:?}", heap_sort(v));
+
+    println!("bucket sort");
+    let mut v = vec![8, 7, 6, 5, 4, 3, 2, 1];
+    println!("{:?}", bucket_sort(v));
+    let mut v = vec![8, 7, 6, 5, 4, 3, 2, 1].into_iter().rev().collect();
+    println!("{:?}", bucket_sort(v));
 }
 
 fn merge_sort(mut v: Vec<i32>, left: usize, right: usize) -> Vec<i32>{
@@ -110,4 +116,25 @@ fn heap_sort(mut v: Vec<i32>) -> Vec<i32> {
     }
 
     return v
+}
+
+fn bucket_sort(mut v: Vec<i32>) -> Vec<i32> {
+    let MAX = 100_000;
+    let mut num: Vec<i32> = vec![0; MAX];
+    for i in 0..v.len() {
+        num[v[i] as usize] += 1;
+    }
+
+    let mut sum: Vec<i32> = vec![0; MAX];
+    for i in 1..MAX {
+        let j = i as usize;
+        sum[j] = sum[j - 1] + num[j];
+    }
+
+    let mut v2: Vec<i32> = vec![0; v.len()];
+    for i in (0..v.len()).rev() {
+        v2[(sum[v[i] as usize] - 1) as usize] = v[i];
+    }
+
+    return v2
 }
