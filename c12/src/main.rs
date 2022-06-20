@@ -1,5 +1,5 @@
 use rand::prelude::*;
-use std::collections::HashMap;
+use std::collections::{BinaryHeap, HashMap};
 
 fn main() {
     do_training();
@@ -11,14 +11,18 @@ fn main() {
     println!("question 11-2");
     // Aでソートして小さい順にMになるまで買う
 
-    println!("question 11-4");
+    println!("question 11-3");
     // それまでの順番とk番目の値を保持して、追加されるたびに都度比較する
+    let v = vec![8, 7, 6, 5, 4, 3, 2, 1];
+    q11_3(&v, 4);
 
     // question 11-4
     // 証明が面倒なので略
 
     println!("question 11-5");
     // 順に要素を追加していく, その都度 k 番目に小さい値を保持・比較する
+    let v = vec![8, 7, 6, 5, 4, 3, 2, 1];
+    println!("{}", q11_5(&v, 4));
 
     // question 11-6
     // ムズイ
@@ -170,4 +174,51 @@ fn q11_1(mut v: Vec<i32>) {
     for v in temp_v.into_iter() {
         println!("{}: {}", v, order_of_x[&v]);
     }
+}
+
+fn q11_3(v: &Vec<i32>, k: usize) {
+    let mut lowers = BinaryHeap::new();
+    let mut highers = BinaryHeap::new();
+    let mut counter = 0;
+    for i in v.into_iter() {
+        if counter < k {
+            lowers.push(i);
+        } else {
+            let mut temp: i32 = 0;
+            if let Some(mx) = lowers.pop() {
+                temp = *mx;
+            }
+            if temp < *i {
+                highers.push(*i);
+            } else {
+                highers.push(temp);
+                lowers.push(&*i);
+            }
+        }
+        counter += 1;
+    }
+    let result = lowers.pop().unwrap();
+    println!("{}", result);
+}
+
+
+fn q11_5(v: &Vec<i32>, k: usize) -> i32 {
+    let mut counter: usize = 0;
+    let mut kth_smallest_value: i32 = -1 << 30;
+    let mut prev_smallest_value: i32 = -1 << 30;
+    for i in v.into_iter() {
+        counter += 1;
+        if counter < k {
+            if kth_smallest_value <= *i {
+                prev_smallest_value = kth_smallest_value;
+                kth_smallest_value = *i;
+            }
+        } else {
+            if *i <= kth_smallest_value {
+                kth_smallest_value = *i;
+            }
+        }
+    }
+    println!("{}", kth_smallest_value);
+    return 1
 }
