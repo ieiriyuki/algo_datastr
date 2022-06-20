@@ -1,7 +1,27 @@
 use rand::prelude::*;
+use std::collections::HashMap;
 
 fn main() {
     do_training();
+
+    println!("question 11-1");
+    let mut v = vec![8, 7, 6, 5, 4, 3, 2, 1];
+    q11_1(v);
+
+    println!("question 11-2");
+    // Aでソートして小さい順にMになるまで買う
+
+    println!("question 11-4");
+    // それまでの順番とk番目の値を保持して、追加されるたびに都度比較する
+
+    // question 11-4
+    // 証明が面倒なので略
+
+    println!("question 11-5");
+    // 順に要素を追加していく, その都度 k 番目に小さい値を保持・比較する
+
+    // question 11-6
+    // ムズイ
 }
 
 fn do_training() {
@@ -137,4 +157,17 @@ fn bucket_sort(mut v: Vec<i32>) -> Vec<i32> {
     }
 
     return v2
+}
+
+fn q11_1(mut v: Vec<i32>) {
+    let temp_v = v.clone();
+    let n = temp_v.len();
+    let sorted_v = merge_sort(v, 0, n);
+    let mut order_of_x = HashMap::<i32, usize>::new();
+    for i in 0..n {
+        order_of_x.insert(sorted_v[i], i);
+    }
+    for v in temp_v.into_iter() {
+        println!("{}: {}", v, order_of_x[&v]);
+    }
 }
