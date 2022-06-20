@@ -14,6 +14,12 @@ fn do_training() {
     println!("quick sort");
     let mut v = vec![8, 7, 6, 5, 4, 3, 2, 1];
     println!("{:?}", quick_sort(v, 0, 8));
+
+    println!("heap sort");
+    let mut v = vec![8, 7, 6, 5, 4, 3, 2, 1];
+    println!("{:?}", heap_sort(v));
+    let mut v = vec![8, 7, 6, 5, 4, 3, 2, 1].into_iter().rev().collect();
+    println!("{:?}", heap_sort(v));
 }
 
 fn merge_sort(mut v: Vec<i32>, left: usize, right: usize) -> Vec<i32>{
@@ -68,6 +74,40 @@ fn quick_sort(mut v: Vec<i32>, left: usize, right: usize) -> Vec<i32> {
 
     v = quick_sort(v, left, i);
     v = quick_sort(v, i + 1, right);
+
+    return v
+}
+
+fn heapify(mut v: Vec<i32>, i: usize, n: usize) -> Vec<i32> {
+    let mut left_child = i * 2 + 1;
+    if left_child >= n {
+        return v
+    }
+
+    if left_child + 1 < n && v[left_child + 1] > v[left_child] {
+        left_child += 1;
+    }
+    if v[left_child] <= v[i] {
+        return v
+    }
+
+    v.swap(i, left_child);
+    v = heapify(v, left_child, n);
+
+    return v
+}
+
+fn heap_sort(mut v: Vec<i32>) -> Vec<i32> {
+    let n = v.len();
+
+    for i in (0..(n / 2)).rev() {
+        v = heapify(v, i, n);
+    }
+
+    for i in (1..n).rev() {
+        v.swap(0, i);
+        v = heapify(v, 0, i);
+    }
 
     return v
 }
