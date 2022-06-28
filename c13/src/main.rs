@@ -34,22 +34,22 @@ fn c13_2(g: &Vec<Vec<usize>>) {
     }
 }
 
-fn bfs(g: &Vec<Vec<usize>>) -> usize {
+fn bfs(g: &Vec<Vec<usize>>, s: usize) -> usize {
     let n = g.len();
     let mut dist: Vec<i32> = vec![-1; n];
     let mut queue = VecDeque::<usize>::new();
 
-    dist[0] = 0;
-    queue.push_back(0);
+    dist[s] = 0;
+    queue.push_back(s);
     while ! queue.is_empty() {
         let v = queue.pop_front().unwrap();
         queue.pop_back();
 
         for i in g[v].iter() {
             if dist[*i] != -1 {
-                println!("{}", *i);
                 continue
             }
+            println!("{}", v);
             dist[*i] = dist[v] + 1;
             queue.push_back(*i);
         }
@@ -61,6 +61,6 @@ fn bfs(g: &Vec<Vec<usize>>) -> usize {
 fn c13_3(g: &Vec<Vec<usize>>) {
     println!("code 13-3");
     for i in 0..7 {
-        bfs(g);
+        bfs(g, i);
     }
 }
