@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 fn main() {
     let g: Vec<Vec<usize>> = vec![
         vec![5],
@@ -10,6 +12,7 @@ fn main() {
         vec![0],
     ];
     c13_2(&g);
+    c13_3(&g);
 }
 
 fn dfs(g: &Vec<Vec<usize>>, v: usize, seen: &mut Vec<bool>) {
@@ -31,10 +34,33 @@ fn c13_2(g: &Vec<Vec<usize>>) {
     }
 }
 
-fn bfs(g: &Vec<Vec<usize>>, v: usize, seen: &mut Vec<bool>) {
+fn bfs(g: &Vec<Vec<usize>>) -> usize {
+    let n = g.len();
+    let mut dist: Vec<i32> = vec![-1; n];
+    let mut queue = VecDeque::<usize>::new();
 
+    dist[0] = 0;
+    queue.push_back(0);
+    while ! queue.is_empty() {
+        let v = queue.pop_front().unwrap();
+        queue.pop_back();
+
+        for i in g[v].iter() {
+            if dist[*i] != -1 {
+                println!("{}", *i);
+                continue
+            }
+            dist[*i] = dist[v] + 1;
+            queue.push_back(*i);
+        }
+    }
+
+    return (*dist.iter().max().unwrap()).try_into().unwrap()
 }
 
-fn c13_3() {
+fn c13_3(g: &Vec<Vec<usize>>) {
     println!("code 13-3");
+    for i in 0..7 {
+        bfs(g);
+    }
 }
