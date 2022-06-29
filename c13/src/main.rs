@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::collections::{HashSet, VecDeque};
 
 fn main() {
     let g: Vec<Vec<usize>> = vec![
@@ -13,6 +13,8 @@ fn main() {
     ];
     c13_2(&g);
     c13_3(&g);
+
+    do_q13_1();
 }
 
 fn dfs(g: &Vec<Vec<usize>>, v: usize, seen: &mut Vec<bool>) {
@@ -63,4 +65,78 @@ fn c13_3(g: &Vec<Vec<usize>>) {
     for i in 0..7 {
         bfs(g, i);
     }
+}
+
+fn make_graph(mut g: Vec<Vec<usize>>, inputs: &Vec<(usize, usize)>) -> Vec<Vec<usize>> {
+    // undirected graph
+    let mut x: HashSet<usize> = HashSet::new();
+    for item in inputs.iter() {
+        let (node, path) = *item;
+        x.insert(node);
+        x.insert(path);
+    }
+    for i in 0..x.len() {
+        g.push(Vec::<usize>::new());
+    }
+    for item in inputs.iter() {
+        let (node, path) = *item;
+        g[node].push(path);
+        g[path].push(node);
+    }
+    return g
+}
+
+fn q13_1(g: &Vec<Vec<usize>>) -> usize {
+    println!("{:?}", g);
+    let mut roots: Vec<i32> = vec![-1; g.len()];
+    for i in 0..g.len() {
+        roots = bfs_rootfind(g, roots, i);
+    }
+    roots.sort();
+    roots.dedup();
+    println!("{:?}", roots);
+    return roots.len()
+}
+
+fn do_q13_1() {
+    println!("question 13-1");
+    let a: Vec<(usize, usize)> = vec![
+        (0, 2),
+        (1, 3),
+        (2, 6),
+        (4, 5),
+    ];
+    let mut g: Vec<Vec<usize>> = Vec::new();
+    g = make_graph(g, &a);
+    println!("{}", q13_1(&g));
+    let a: Vec<(usize, usize)> = vec![
+        (0, 1),
+        (1, 2),
+        (2, 3),
+        (3, 4),
+        (4, 5),
+    ];
+    let mut g: Vec<Vec<usize>> = Vec::new();
+    g = make_graph(g, &a);
+    println!("{}", q13_1(&g));
+}
+
+fn bfs_rootfind(g: &Vec<Vec<usize>>, mut roots: Vec<i32>, v: usize) -> Vec<i32> {
+    let mut queue = VecDeque::<usize>::new();
+    if (roots[v] == -1) {
+        roots[v] = v as i32;
+    }
+    queue.push_back(v);
+    while ! queue.is_empty() {
+        let cur = queue.pop_front().unwrap();
+
+        for i in g[cur].iter() {
+            if roots[*i] != -1 {
+                continue
+            }
+            roots[*i] = roots[cur];
+            queue.push_back(*i);
+        }
+    }
+    return roots
 }
