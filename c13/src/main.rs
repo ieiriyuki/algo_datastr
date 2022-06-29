@@ -15,6 +15,7 @@ fn main() {
     c13_3(&g);
 
     do_q13_1();
+    do_q13_2();
 }
 
 fn dfs(g: &Vec<Vec<usize>>, v: usize, seen: &mut Vec<bool>) {
@@ -123,7 +124,7 @@ fn do_q13_1() {
 
 fn bfs_rootfind(g: &Vec<Vec<usize>>, mut roots: Vec<i32>, v: usize) -> Vec<i32> {
     let mut queue = VecDeque::<usize>::new();
-    if (roots[v] == -1) {
+    if roots[v] == -1 {
         roots[v] = v as i32;
     }
     queue.push_back(v);
@@ -139,4 +140,67 @@ fn bfs_rootfind(g: &Vec<Vec<usize>>, mut roots: Vec<i32>, v: usize) -> Vec<i32> 
         }
     }
     return roots
+}
+
+fn do_q13_2() {
+    println!("question 13-2");
+    let a: Vec<(usize, usize)> = vec![
+        (0, 1),
+        (1, 2),
+        (2, 3),
+        (4, 5),
+        (2, 5),
+    ];
+    let mut g: Vec<Vec<usize>> = Vec::new();
+    g = make_dag(g, &a);
+    println!("{}", q13_2(&g, 0, 3));
+    println!("{}", q13_2(&g, 3, 5));
+}
+
+fn make_dag(mut g: Vec<Vec<usize>>, inputs: &Vec<(usize, usize)>) -> Vec<Vec<usize>> {
+    // directed acyclic graph
+    let mut x: HashSet<usize> = HashSet::new();
+    for item in inputs.iter() {
+        let (node, path) = *item;
+        x.insert(node);
+        x.insert(path);
+    }
+    for i in 0..x.len() {
+        g.push(Vec::<usize>::new());
+    }
+    for item in inputs.iter() {
+        let (node, path) = *item;
+        g[node].push(path);
+    }
+    return g
+}
+
+fn q13_2(g: &Vec<Vec<usize>>, s: usize, t: usize) -> bool {
+    println!("{:?}", g);
+    let mut is_reachable = vec![false; g.len()];
+    is_reachable = bfs_reachable(g, is_reachable, s);
+    return is_reachable[t]
+}
+
+fn bfs_reachable(
+    g: &Vec<Vec<usize>>,
+    mut is_reachable: Vec<bool>,
+    s: usize,
+) -> Vec<bool> {
+    let mut queue = VecDeque::<usize>::new();
+    if ! is_reachable[s] {
+        is_reachable[s] = true;
+    }
+    queue.push_back(s);
+    while ! queue.is_empty() {
+        let cur = queue.pop_front().unwrap();
+        for i in g[cur].iter() {
+            if is_reachable[*i] {
+                continue
+            }
+            is_reachable[*i] = true;
+            queue.push_back(*i);
+        }
+    }
+    return is_reachable
 }
