@@ -16,6 +16,7 @@ fn main() {
 
     do_q13_1();
     do_q13_2();
+    do_q13_3();
 }
 
 fn dfs(g: &Vec<Vec<usize>>, v: usize, seen: &mut Vec<bool>) {
@@ -203,4 +204,79 @@ fn bfs_reachable(
         }
     }
     return is_reachable
+}
+
+fn do_q13_3() {
+    println!("qustion 13-3");
+    let a: Vec<(usize, usize)> = vec![
+        (0, 1),
+        (0, 5),
+        (1, 2),
+        (2, 3),
+        (2, 5),
+        (3, 4),
+        (4, 5),
+    ];
+    let mut g: Vec<Vec<usize>> = Vec::new();
+    g = make_graph(g, &a);
+    println!("{}", q13_3(&g)); // should be true
+    let a: Vec<(usize, usize)> = vec![
+        (0, 1),
+        (0, 5),
+        (1, 2),
+        (2, 3),
+        (2, 5),
+        (3, 4),
+        (4, 5),
+        (4, 2),
+    ];
+    let mut g: Vec<Vec<usize>> = Vec::new();
+    g = make_graph(g, &a);
+    println!("{}", q13_3(&g)); // should be false
+}
+
+fn q13_3(g: &Vec<Vec<usize>>) -> bool {
+    let mut labels = vec!['U'; g.len()];
+    for i in 0..g.len() {
+        labels = bfs_label(g, labels, i);
+    }
+    println!("{:?}", labels);
+    for i in 0..g.len() {
+        for j in g[i].iter() {
+            if labels[i] == labels[*j] {
+                return false
+            }
+        }
+    }
+    true
+}
+
+fn bfs_label(
+    g: &Vec<Vec<usize>>,
+    mut labels: Vec<char>,
+    s: usize,
+) -> Vec<char> {
+    let mut queue = VecDeque::<usize>::new();
+    if labels[s] == 'U' {
+        labels[s] = 'A';
+    }
+    queue.push_back(s);
+    while ! queue.is_empty() {
+        let cur = queue.pop_front().unwrap();
+
+        for i in g[cur].iter() {
+            if labels[s] == labels[*i] {
+                return labels
+            }
+            if labels[*i] == 'U' {
+                if labels[s] == 'A' {
+                    labels[*i] = 'B'
+                } else if labels[s] == 'B' {
+                    labels[*i] = 'A'
+                }
+            }
+            queue.push_back(*i);
+        }
+    }
+    return labels
 }
