@@ -17,6 +17,8 @@ fn main() {
     do_q13_1();
     do_q13_2();
     do_q13_3();
+    // question 13-4, データの用意が面倒なのでパス
+    do_q13_5();
 }
 
 fn dfs(g: &Vec<Vec<usize>>, v: usize, seen: &mut Vec<bool>) {
@@ -279,4 +281,69 @@ fn bfs_label(
         }
     }
     return labels
+}
+
+fn do_q13_5() {
+    println!("question 13-5");
+    let a: Vec<(usize, usize)> = vec![
+        (0, 5),
+        (1, 3),
+        (1, 6),
+        (2, 5),
+        (2, 7),
+        (3, 0),
+        (3, 7),
+        (4, 1),
+        (4, 2),
+        (4, 6),
+        (6, 7),
+        (7, 0),
+    ];
+    let mut dag: Vec<Vec<usize>> = Vec::new();
+    dag = make_dag(dag, &a);
+    println!("{:?}", dag);
+    q13_5(&dag);
+}
+
+fn q13_5(dag: &Vec<Vec<usize>>) {
+    for i in 0..dag.len() {
+        let mut order = Vec::<usize>::new();
+        order = bfs_topsort(dag, order, i);
+        println!("{:?}", order);
+        let mut visit = vec![false; dag.len()];
+        order.reverse();
+        let mut final_order = Vec::<usize>::new();
+        for j in order.into_iter() {
+            if ! visit[j] {
+                final_order.push(j);
+                visit[j] = true;
+            }
+        }
+        if final_order.len() == dag.len() {
+            final_order.reverse();
+            println!("{:?}", final_order);
+            return
+        }
+    }
+}
+
+fn bfs_topsort(
+    dag: &Vec<Vec<usize>>,
+    mut order: Vec<usize>,
+    s: usize
+) -> Vec<usize> {
+    let mut queue = VecDeque::<usize>::new();
+    order.push(s);
+    queue.push_back(s);
+    while ! queue.is_empty() {
+        let cur = queue.pop_front().unwrap();
+        for i in dag[cur].iter() {
+            /*if visit[*i] {
+                continue
+            }*/
+            order.push(*i);
+            queue.push_back(*i);
+        }
+    }
+    return order
 }
