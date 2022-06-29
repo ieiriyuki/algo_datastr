@@ -19,6 +19,7 @@ fn main() {
     do_q13_3();
     // question 13-4, データの用意が面倒なのでパス
     do_q13_5();
+    do_q13_6();
 }
 
 fn dfs(g: &Vec<Vec<usize>>, v: usize, seen: &mut Vec<bool>) {
@@ -79,7 +80,7 @@ fn make_graph(mut g: Vec<Vec<usize>>, inputs: &Vec<(usize, usize)>) -> Vec<Vec<u
         x.insert(node);
         x.insert(path);
     }
-    for i in 0..x.len() {
+    for _i in 0..x.len() {
         g.push(Vec::<usize>::new());
     }
     for item in inputs.iter() {
@@ -168,7 +169,7 @@ fn make_dag(mut g: Vec<Vec<usize>>, inputs: &Vec<(usize, usize)>) -> Vec<Vec<usi
         x.insert(node);
         x.insert(path);
     }
-    for i in 0..x.len() {
+    for _i in 0..x.len() {
         g.push(Vec::<usize>::new());
     }
     for item in inputs.iter() {
@@ -346,4 +347,65 @@ fn bfs_topsort(
         }
     }
     return order
+}
+
+fn do_q13_6() {
+    println!("question 13-6");
+    let a: Vec<(usize, usize)> = vec![
+        (0, 5),
+        (1, 3),
+        (1, 6),
+        (2, 5),
+        (2, 7),
+        (3, 0),
+        (3, 7),
+        (4, 1),
+        (4, 2),
+        (4, 6),
+        (6, 7),
+        (7, 0),
+    ];
+    let mut dag: Vec<Vec<usize>> = Vec::new();
+    dag = make_dag(dag, &a);
+    q13_6(&dag); // no cycle
+    let a: Vec<(usize, usize)> = vec![
+        (0, 1),
+        (1, 2),
+        (1, 3),
+        (2, 4),
+        (3, 0),
+    ];
+    let mut dag: Vec<Vec<usize>> = Vec::new();
+    dag = make_dag(dag, &a);
+    q13_6(&dag); // cycle
+}
+
+fn q13_6(dag: &Vec<Vec<usize>>){
+    let mut seen = vec![false; dag.len()];
+    let mut path = Vec::<usize>::new();
+    for i in 0..dag.len() {
+        seen = dfs_cycle(dag, &mut seen, i, i, &mut path);
+    }
+}
+
+fn dfs_cycle(
+    dag: &Vec<Vec<usize>>,
+    seen: &mut Vec<bool>,
+    v: usize,
+    par: usize,
+    path: &mut Vec<usize>,
+) -> Vec<bool> {
+    seen[v] = true;
+    path.push(v);
+    for next_v in dag[v].iter() {
+        if par == *next_v {
+            path.push(*next_v);
+            println!("{}, {}, {}, {:?}", par, v, *next_v, path);
+        }
+        if seen[*next_v] {
+            continue
+        }
+        dfs_cycle(dag, seen, *next_v, par, path);
+    }
+    return seen.to_vec()
 }
