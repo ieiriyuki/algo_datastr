@@ -20,10 +20,10 @@ fn q14_1() {
     dag = reverse_dag(dag);
     let mut degree: HashMap<usize, i32> = dag.keys().map(|x| (*x, 0)).collect();
     degree = count_degree(degree, &e);
-    println!("{:?}", degree);
     let mut order = Vec::<usize>::new();
     order = bfs_topsort(&dag, degree, order);
     println!("{:?}", order);
+    longest_path(dag, order);
 
     let e: Vec<(usize, usize)> = vec![
         (2, 3),
@@ -123,6 +123,23 @@ fn bfs_topsort(
     }
     order.reverse();
     return order
+}
+
+fn longest_path(
+    dag: DAG,
+    _order: Vec<usize>,
+) -> usize {
+    let order: HashMap<usize, usize> =
+        _order.iter().enumerate().map(|(idx, &val)| (val, idx)).collect()
+    ;
+    println!("{:?}", order);
+    let mut dp = vec![vec![0; order.len() + 1]; order.len() + 1];
+    for (key, idx) in order.iter() {
+        for j in dag.get(key) {
+            1;
+        }
+    }
+    1
 }
 
 #[derive(Debug)]
