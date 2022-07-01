@@ -22,8 +22,9 @@ fn q14_1() {
     degree = count_degree(degree, &e);
     let mut order = Vec::<usize>::new();
     order = bfs_topsort(&dag, degree, order);
+    dag = reverse_dag(dag);
     println!("{:?}", order);
-    longest_path(dag, order);
+    println!("{}", longest_path(dag, order));
 
     let e: Vec<(usize, usize)> = vec![
         (2, 3),
@@ -129,17 +130,23 @@ fn longest_path(
     dag: DAG,
     _order: Vec<usize>,
 ) -> usize {
+    // this is wrong
     let order: HashMap<usize, usize> =
         _order.iter().enumerate().map(|(idx, &val)| (val, idx)).collect()
     ;
     println!("{:?}", order);
-    let mut dp = vec![vec![0; order.len() + 1]; order.len() + 1];
-    for (key, idx) in order.iter() {
-        for j in dag.get(key) {
-            1;
+    println!("{:?}", dag);
+    let mut dp = vec![0; order.len() + 1];
+    for (key, i) in order.iter() {
+        for _j in dag.get(key).unwrap().iter() {
+            let j = order[_j];
+            dp[j] += dp[*i] + 1;
         }
     }
-    1
+    dp[order.len()] = dp[order.len() - 1];
+    println!("{:?}", dp);
+    dp.sort();
+    dp[order.len()]
 }
 
 #[derive(Debug)]
