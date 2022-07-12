@@ -5,6 +5,7 @@ fn main() {
 }
 
 type DAG = HashMap<usize, Vec<usize>>;
+type Seen = HashMap<usize, bool>;
 
 fn q14_1() {
     println!("question 14-1");
@@ -17,37 +18,9 @@ fn q14_1() {
     ];
     let mut dag: DAG = HashMap::new();
     dag = make_dag(dag, &e);
-    dag = reverse_dag(dag);
-    let mut degree: HashMap<usize, i32> = dag.keys().map(|x| (*x, 0)).collect();
-    degree = count_degree(degree, &e);
     let mut order = Vec::<usize>::new();
-    order = bfs_topsort(&dag, degree, order);
-    dag = reverse_dag(dag);
+    order = topo_sort(&dag, order);
     println!("{:?}", order);
-    println!("{}", longest_path(dag, order));
-
-    let e: Vec<(usize, usize)> = vec![
-        (2, 3),
-        (4, 5),
-        (5, 6),
-    ];
-    let mut dag: DAG = HashMap::new();
-    dag = make_dag(dag, &e);
-    println!("{:?}", dag);
-
-    let e: Vec<(usize, usize)> = vec![
-        (5, 3),
-        (2, 3),
-        (2, 4),
-        (5, 2),
-        (5, 1),
-        (1, 4),
-        (4, 3),
-        (1, 3),
-    ];
-    let mut dag: DAG = HashMap::new();
-    dag = make_dag(dag, &e);
-    println!("{:?}", dag);
 
 }
 
@@ -72,58 +45,39 @@ fn make_dag(
     return dag
 }
 
-fn reverse_dag(mut dag: DAG) -> DAG {
-    let mut temp: DAG = HashMap::new();
-    for key in dag.keys() {
-        temp.insert(*key, Vec::new());
-    }
-    for (key, val) in dag.iter() {
-        for elem in val.iter() {
-            let comes_from = temp.entry(*elem).or_insert(Vec::new());
-            comes_from.push(*key);
-        }
-    }
-    dag = temp.clone();
-    return dag
-}
-
-fn count_degree(
-    mut degree: HashMap<usize, i32>,
-    inputs: &Vec<(usize, usize)>,
-) -> HashMap<usize, i32> {
-    for (from, _) in inputs.iter() {
-        let c = degree.get_mut(&from).unwrap();
-        *c += 1;
-    }
-    return degree
-}
-
-fn bfs_topsort(
+fn dfs(
     dag: &DAG,
-    mut degree: HashMap<usize, i32>,
+    v: usize,
+    seen: &mut Seen,
     mut order: Vec<usize>,
 ) -> Vec<usize> {
-    let mut queue = VecDeque::<usize>::new();
-    for (key, val) in degree.iter() {
-        if *val == 0 {
-            queue.push_back(*key);
-        }
+    if let Some(x) = seen.get_mut(&v) {
+        *x = true;
     }
-
-    while ! queue.is_empty() {
-        let cur_v = queue.pop_front().unwrap();
-        order.push(cur_v);
-
-        for next_v in dag[&cur_v].iter() {
-            let c = degree.get_mut(next_v).unwrap();
-            *c -= 1;
-            if degree[next_v] == 0 {
-                queue.push_back(*next_v)
-            }
+    for next_v in dag[&v].iter() {
+        if seen[next_v] {
+            continue
         }
+        order = dfs(dag, *next_v, seen, order);
+    }
+    order.push(v);
+    order
+}
+
+fn topo_sort(
+    dag: &DAG,
+    mut order: Vec<usize>,
+) -> Vec<usize> {
+    let mut seen: Seen = dag.keys().map(|x| (*x, false)).collect();
+
+    for v in dag.keys() {
+        if seen[v] {
+            continue;
+        }
+        order = dfs(dag, *v, &mut seen, order);
     }
     order.reverse();
-    return order
+    order
 }
 
 fn longest_path(
