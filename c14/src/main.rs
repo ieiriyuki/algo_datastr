@@ -117,6 +117,27 @@ fn q14_2() {
     let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
     wg = make_wgraph(&a, wg);
     println!("{:?}", wg);
+
+    let n = 2usize;
+    let a = vec![
+        (1, 2, 1),
+        (2, 1, 1),
+    ];
+    let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
+    wg = make_wgraph(&a, wg);
+    println!("{:?}", wg);
+
+    let n = 6usize;
+    let a = vec![
+        (1, 2, -1000),
+        (2, 3, -1000),
+        (3, 4, -1000),
+        (4, 5, -1000),
+        (5, 6, -1000),
+    ];
+    let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
+    wg = make_wgraph(&a, wg);
+    println!("{:?}", wg);
 }
 
 fn make_wgraph(
@@ -131,4 +152,12 @@ fn make_wgraph(
         vc.push(we);
     }
     return wg
+}
+
+fn bellman_ford() -> Result<i32, &'static str> {
+    let inf: i32 = 1 << 31;
+    let mut dist: HashMap<usize, i32> = (0..99).map(|x| (x, inf)).collect();
+
+    
+    Err("inf")
 }
