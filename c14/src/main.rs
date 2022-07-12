@@ -2,10 +2,17 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 fn main() {
     q14_1();
+    q14_2();
 }
 
 type DAG = HashMap<usize, Vec<usize>>;
-type Seen = HashMap<usize, bool>;
+#[derive(Debug)]
+struct WEdge {
+    to: usize,
+    weight: i32,
+}
+type WGraph = HashMap<usize, Vec<WEdge>>;
+
 
 fn q14_1() {
     println!("question 14-1");
@@ -99,8 +106,29 @@ fn longest_path(
     x
 }
 
-#[derive(Debug)]
-struct Edge {
-    to: usize,
-    weight: i32,
+fn q14_2() {
+    println!("question 14-2");
+    let n = 3usize;
+    let a = vec![
+        (1, 2, 4),
+        (2, 3, 3),
+        (1, 3, 5),
+    ];
+    let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
+    wg = make_wgraph(&a, wg);
+    println!("{:?}", wg);
+}
+
+fn make_wgraph(
+    edge: &Vec<(usize, usize, i32)>,
+    mut wg: WGraph,
+) -> WGraph {
+    // weighted directed graph
+    for item in edge.iter() {
+        let (node, path, weight) = *item;
+        let we = WEdge {to: path, weight: weight};
+        let vc = wg.entry(node).or_insert(Vec::<WEdge>::new());
+        vc.push(we);
+    }
+    return wg
 }
