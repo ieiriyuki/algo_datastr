@@ -18,10 +18,23 @@ fn q14_1() {
     ];
     let mut dag: DAG = HashMap::new();
     dag = make_dag(dag, &e);
-    let mut order = Vec::<usize>::new();
-    order = topo_sort(&dag, order);
-    println!("{:?}", order);
+    longest_path(dag);
 
+    //すべてのノードが登場しないと、インデックスでエラる
+
+    let e: Vec<(usize, usize)> = vec![
+        (5, 3),
+        (2, 3),
+        (2, 4),
+        (5, 2),
+        (5, 1),
+        (1, 4),
+        (4, 3),
+        (1, 3),
+    ];
+    let mut dag: DAG = HashMap::new();
+    dag = make_dag(dag, &e);
+    longest_path(dag);
 }
 
 fn make_dag(
@@ -48,59 +61,42 @@ fn make_dag(
 fn dfs(
     dag: &DAG,
     v: usize,
-    seen: &mut Seen,
-    mut order: Vec<usize>,
-) -> Vec<usize> {
-    if let Some(x) = seen.get_mut(&v) {
-        *x = true;
+    mut dp: Vec<i32>,
+) -> (Vec<i32>, i32) {
+    if dp[v - 1] != -1 {
+        let res = dp[v - 1];
+        return (dp, res)
     }
+
     for next_v in dag[&v].iter() {
-        if seen[next_v] {
-            continue
+        let res: i32;
+        (dp, res) = dfs(dag, *next_v, dp);
+        if dp[v - 1] < res + 1 {
+            dp[v - 1] = res + 1;
         }
-        order = dfs(dag, *next_v, seen, order);
     }
-    order.push(v);
-    order
-}
-
-fn topo_sort(
-    dag: &DAG,
-    mut order: Vec<usize>,
-) -> Vec<usize> {
-    let mut seen: Seen = dag.keys().map(|x| (*x, false)).collect();
-
-    for v in dag.keys() {
-        if seen[v] {
-            continue;
-        }
-        order = dfs(dag, *v, &mut seen, order);
+    let mut res = dp[v - 1];
+    if res < 0 {
+        res = 0;
     }
-    order.reverse();
-    order
+    dp[v - 1] = res;
+    (dp, res)
 }
 
 fn longest_path(
     dag: DAG,
-    _order: Vec<usize>,
-) -> usize {
-    // this is wrong
-    let order: HashMap<usize, usize> =
-        _order.iter().enumerate().map(|(idx, &val)| (val, idx)).collect()
-    ;
-    println!("{:?}", order);
-    println!("{:?}", dag);
-    let mut dp = vec![0; order.len() + 1];
-    for (key, i) in order.iter() {
-        for _j in dag.get(key).unwrap().iter() {
-            let j = order[_j];
-            dp[j] += dp[*i] + 1;
+) -> i32 {
+    let mut dp: Vec<i32> = vec![-1; dag.len()];
+    let mut x: i32 = 0;
+    for v in dag.keys() {
+        let temp: i32;
+        (dp, temp) = dfs(&dag, *v, dp);
+        if x < temp {
+            x = temp;
         }
     }
-    dp[order.len()] = dp[order.len() - 1];
-    println!("{:?}", dp);
-    dp.sort();
-    dp[order.len()]
+    println!("{}, {:?}", x, dp);
+    x
 }
 
 #[derive(Debug)]
