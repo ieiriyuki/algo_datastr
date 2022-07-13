@@ -153,8 +153,8 @@ fn q14_2() {
         (1, 2, -1000),
         (2, 3, -999),
         (3, 4, 1),
+        (4, 2, -1),
         (4, 5, 2),
-        (5, 3, 3),
     ];
     let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
     wg = make_wgraph(&a, wg);
@@ -208,11 +208,11 @@ fn bellman_ford(
     let val = dist.entry(start).or_insert(0);
     *val = 0;
 
-    for i in order.iter() {
+    for i in 0..=n*n {
         let mut is_updated = false;
 
         for v in order.iter() {
-            if dist[v] == ninf {
+            if dist[v] <= ninf / 2 {
                 continue
             }
 
@@ -226,8 +226,7 @@ fn bellman_ford(
                 }
             }
         }
-        let last = order[order.len() - 1];
-        if *i == last && is_updated {
+        if i == n*n && is_updated {
             return Err("inf")
         }
     }
