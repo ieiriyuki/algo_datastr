@@ -3,6 +3,7 @@ use std::collections::{HashMap, HashSet};
 fn main() {
     q14_1();
     q14_2();
+    q14_3();
 }
 
 type DAG = HashMap<usize, Vec<usize>>;
@@ -13,7 +14,6 @@ struct WEdge {
 }
 type WGraph = HashMap<usize, Vec<WEdge>>;
 
-
 fn q14_1() {
     println!("question 14-1");
     let e: Vec<(usize, usize)> = vec![
@@ -23,8 +23,7 @@ fn q14_1() {
         (2, 4),
         (3, 4),
     ];
-    let mut dag: DAG = HashMap::new();
-    dag = make_dag(dag, &e);
+    let dag = make_dag(HashMap::new(), 4, &e);
     longest_path(dag);
 
     //すべてのノードが登場しないと、インデックスでエラる
@@ -39,25 +38,17 @@ fn q14_1() {
         (4, 3),
         (1, 3),
     ];
-    let mut dag: DAG = HashMap::new();
-    dag = make_dag(dag, &e);
+    let dag: DAG = make_dag(HashMap::new(), 5, &e);
     longest_path(dag);
 }
 
 fn make_dag(
     mut dag: DAG,
+    n: usize,
     inputs: &Vec<(usize, usize)>
 ) -> DAG {
     // directed acyclic graph
-    let mut x: HashSet<usize> = HashSet::new();
-    for item in inputs.iter() {
-        let (node, path) = *item;
-        x.insert(node);
-        x.insert(path);
-    }
-    for node in x.into_iter() {
-        dag.insert(node, Vec::<usize>::new());
-    }
+    dag = (1..=n).map(|x| (x, Vec::<usize>::new())).collect();
     for item in inputs.iter() {
         let (node, path) = *item;
         dag.get_mut(&node).unwrap().push(path);
@@ -202,7 +193,6 @@ fn bellman_ford(
     let mut order: Vec<usize> = wg.keys().map(|x| *x).collect();
     order.sort();
 
-    let mut has_ninf = false;
     let mut dist: HashMap<usize, i32> = (1..=n).map(|x| (x, ninf)).collect();
     let start = order[0];
     let val = dist.entry(start).or_insert(0);
@@ -231,4 +221,29 @@ fn bellman_ford(
         }
     }
     Ok(dist[&n])
+}
+
+fn q14_3() {
+    println!("question 14-3");
+    let n = 4usize;
+    let e: Vec<(usize, usize)> = vec![
+        (1, 2),
+        (2, 3),
+        (3, 4),
+        (4, 1),
+        //(1, 3),
+    ];
+    let dag = make_dag(HashMap::new(), n, &e);
+    match hopscotch(&dag, 1, 3) {
+        Ok(x) => println!("{}", x),
+        Err(x) => println!("{}", x),
+    }
+}
+
+fn hopscotch(
+    dag: &DAG,
+    s: usize,
+    t: usize
+) -> Result<i32, i32> {
+    Err(-1)
 }
