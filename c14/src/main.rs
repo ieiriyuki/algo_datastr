@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, HashSet};
 
 fn main() {
     q14_1();
@@ -116,7 +116,10 @@ fn q14_2() {
     ];
     let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
     wg = make_wgraph(&a, wg);
-    println!("{:?}", wg);
+    match bellman_ford(&wg, n) {
+        Ok(x) => println!("{}", x),
+        Err(x) => println!("{}", x),
+    };
 
     let n = 2usize;
     let a = vec![
@@ -125,7 +128,10 @@ fn q14_2() {
     ];
     let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
     wg = make_wgraph(&a, wg);
-    println!("{:?}", wg);
+    match bellman_ford(&wg, n) {
+        Ok(x) => println!("{}", x),
+        Err(x) => println!("{}", x),
+    };
 
     let n = 6usize;
     let a = vec![
@@ -137,7 +143,41 @@ fn q14_2() {
     ];
     let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
     wg = make_wgraph(&a, wg);
-    println!("{:?}", wg);
+    match bellman_ford(&wg, n) {
+        Ok(x) => println!("{}", x),
+        Err(x) => println!("{}", x),
+    };
+
+    let n = 6usize;
+    let a = vec![
+        (1, 2, -1000),
+        (2, 3, -999),
+        (3, 4, 1),
+        (4, 5, 2),
+        (5, 3, 3),
+    ];
+    let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
+    wg = make_wgraph(&a, wg);
+    match bellman_ford(&wg, n) {
+        Ok(x) => println!("{}", x),
+        Err(x) => println!("{}", x),
+    };
+
+    let n = 6usize;
+    let a = vec![
+        (1, 2, -1),
+        (2, 3, -1),
+        (3, 4, -1),
+        (4, 2, -1),
+        (2, 5, -1),
+        (1, 5, -1000),
+    ];
+    let mut wg: WGraph = (1..=n).map(|x| (x, Vec::<WEdge>::new())).collect();
+    wg = make_wgraph(&a, wg);
+    match bellman_ford(&wg, n) {
+        Ok(x) => println!("{}", x),
+        Err(x) => println!("{}", x),
+    };
 }
 
 fn make_wgraph(
@@ -154,10 +194,42 @@ fn make_wgraph(
     return wg
 }
 
-fn bellman_ford() -> Result<i32, &'static str> {
-    let inf: i32 = 1 << 31;
-    let mut dist: HashMap<usize, i32> = (0..99).map(|x| (x, inf)).collect();
+fn bellman_ford(
+    wg: &WGraph,
+    n: usize,
+) -> Result<i32, &'static str> {
+    let ninf: i32 = -1 << 31;
+    let mut order: Vec<usize> = wg.keys().map(|x| *x).collect();
+    order.sort();
 
-    
-    Err("inf")
+    let mut has_ninf = false;
+    let mut dist: HashMap<usize, i32> = (1..=n).map(|x| (x, ninf)).collect();
+    let start = order[0];
+    let val = dist.entry(start).or_insert(0);
+    *val = 0;
+
+    for i in order.iter() {
+        let mut is_updated = false;
+
+        for v in order.iter() {
+            if dist[v] == ninf {
+                continue
+            }
+
+            for we in wg[v].iter() {
+                let w0 = dist[v];
+                if dist[&we.to] < w0 + we.weight {
+                    if let Some(x) = dist.get_mut(&we.to) {
+                        *x = w0 + we.weight;
+                    }
+                    is_updated = true;
+                }
+            }
+        }
+        let last = order[order.len() - 1];
+        if *i == last && is_updated {
+            return Err("inf")
+        }
+    }
+    Ok(dist[&n])
 }
