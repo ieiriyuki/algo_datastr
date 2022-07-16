@@ -3,17 +3,8 @@ use std::collections::HashMap;
 fn main() {
     // question 15-1 is skipped
     q15_2();
-
+    q15_3();
 }
-
-#[derive(Debug)]
-struct WEdge {
-    to: usize,
-    weight: i32,
-}
-
-type WGraph = HashMap<usize, Vec<WEdge>>;
-type DAG = HashMap<usize, Vec<usize>>;
 
 #[derive(Debug)]
 struct UnionFind {
@@ -138,4 +129,87 @@ fn median_of_edge(
     let median_weight = vec_weight[vec_weight.len() / 2];
 
     println!("{}", median_weight);
+}
+
+fn q15_3() {
+    println!("question 15-3");
+
+    let n: usize = 4;
+    let mut edges: Vec<(usize, usize, i32)> = vec![
+        (1, 2, 3),
+        (1, 3, 3),
+        (2, 3, 3),
+        (2, 4, 3),
+    ];
+    no_alternative(n, edges);
+
+    let n: usize = 4;
+    let mut edges: Vec<(usize, usize, i32)> = vec![
+        (1, 2, 3),
+        (1, 3, 5),
+        (2, 3, 3),
+        (2, 4, 3),
+    ];
+    no_alternative(n, edges);
+
+    let n: usize = 4;
+    let mut edges: Vec<(usize, usize, i32)> = vec![
+        (1, 2, 3),
+        (1, 3, 1),
+        (2, 3, 3),
+        (2, 4, 3),
+    ];
+    no_alternative(n, edges);
+
+    let n: usize = 3;
+    let mut edges: Vec<(usize, usize, i32)> = vec![
+        (1, 2, 1),
+        (2, 3, 1),
+        (1, 3, 1),
+    ];
+    no_alternative(n, edges);
+}
+
+fn no_alternative(
+    n: usize,
+    mut edges: Vec<(usize, usize, i32)>,
+) {
+    if n <= 1 { return }
+    edges.sort_by(|a, b| a.2.cmp(&b.2));
+
+    let mut uf = UnionFind::new(n);
+    let mut edges_in_mst = Vec::<(usize, usize, i32)>::new();
+    let mut ref_weight = 0i32;
+
+    for (from, to, weight) in edges.iter() {
+        if uf.issame(*from, *to) { continue }
+        uf.unite(*from, *to);
+        ref_weight += weight;
+        edges_in_mst.push((*from, *to, *weight));
+    }
+
+    let mut necessaries = Vec::<(usize, usize, i32)>::new();
+
+    for (from_n, to_n, weight_n) in edges_in_mst.iter() {
+        let mut uf_i = UnionFind::new(n);
+        let mut weight_i = 0i32;
+
+        for (from, to, weight) in edges.iter() {
+            if *from == *from_n && *to == *to_n { continue }
+            if uf_i.issame(*from, *to) { continue }
+            uf_i.unite(*from, *to);
+            weight_i += weight;
+        }
+
+        if ref_weight != weight_i {
+            necessaries.push((*from_n, *to_n, *weight_n));
+        }
+    }
+    let mut m = 0usize;
+    let mut cost = 0i32;
+    for (_, _, w) in necessaries.iter() {
+        m += 1;
+        cost += w;
+    }
+    println!("{} {}", m, cost);
 }
