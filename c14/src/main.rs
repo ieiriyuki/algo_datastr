@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, VecDeque};
 
 fn main() {
     q14_1();
@@ -238,6 +238,37 @@ fn q14_3() {
         Ok(x) => println!("{}", x),
         Err(x) => println!("{}", x),
     }
+
+    let n = 3usize;
+    let e: Vec<(usize, usize)> = vec![
+        (1, 2),
+        (2, 3),
+        (3, 1),
+        //(1, 2),
+    ];
+    let dag = make_dag(HashMap::new(), n, &e);
+    match hopscotch(&dag, 1, 2) {
+        Ok(x) => println!("{}", x),
+        Err(x) => println!("{}", x),
+    }
+
+    let n = 6usize;
+    let e: Vec<(usize, usize)> = vec![
+        (1, 2),
+        (2, 3),
+        (3, 4),
+        (4, 5),
+        (5, 1),
+        (1, 4),
+        (1, 5),
+        (4, 6),
+        //(1, 6),
+    ];
+    let dag = make_dag(HashMap::new(), n, &e);
+    match hopscotch(&dag, 1, 6) {
+        Ok(x) => println!("{}", x),
+        Err(x) => println!("{}", x),
+    }
 }
 
 fn hopscotch(
@@ -245,5 +276,79 @@ fn hopscotch(
     s: usize,
     t: usize
 ) -> Result<i32, i32> {
-    Err(-1)
+    let mut dist: HashMap<usize, Vec<i32>>;
+    dist = (1..=dag.len()).map(|x| (x, vec![-1; 3])).collect();
+    if let Some(x) = dist.get_mut(&s) {
+        x[0] = 0;
+    }
+    let mut que = VecDeque::<(usize, usize)>::new();
+    que.push_back((s, 0));
+
+    while ! que.is_empty() {
+        let cur = que.pop_front().unwrap();
+        let v = cur.0;
+        let parity = cur.1;
+        for nv in dag[&v].iter() {
+            let np: usize = (parity + 1) % 3;
+            if dist[nv][np] == -1 {
+                let dist_i = dist[&v][parity];
+                if let Some(x) = dist.get_mut(nv) {
+                    println!("{}, {}, {:?}", nv, np, x);
+                    x[np] = dist_i + 1;
+                }
+                que.push_back((*nv, np));
+            }
+        }
+    }
+    if dist[&t][0] == -1 {
+        return Err(-1)
+    } else {
+        return Ok(dist[&t][0] / 3)
+    }
+}
+
+#[allow(dead_code)]
+fn dikstra(
+    dag: &DAG,
+    s: usize,
+) -> i32 {
+    let mut order: Vec<usize> = dag.keys().map(|x| *x).collect();
+    order.sort();
+    let mut is_used: HashMap<usize, bool> = order.iter().map(|x| (*x, false)).collect();
+    let inf = 1 << 30;
+    let mut dist: HashMap<usize, i32> = order.iter().map(|x| (*x, inf)).collect();
+    if let Some(x) = dist.get_mut(&s) {
+        *x = 0;
+    }
+
+    for _ in order.iter() {
+        let mut min_dist = inf;
+        let mut min_v = 0usize;
+
+        for v in order.iter() {
+            if (! is_used[v]) && dist[v] < min_dist {
+                min_dist = dist[v];
+                min_v = *v;
+            }
+        }
+
+        if min_v == 0 { break; }
+        for nv in dag[&min_v].iter() {
+            let b = dist[&min_v] + 1;
+            if dist[nv] > b {
+                if let Some(x) = dist.get_mut(nv) {
+                    *x = b;
+                }
+            }
+        }
+        if let Some(x) = is_used.get_mut(&min_v) {
+            *x = true;
+        }
+    }
+    let mut muximum = 0i32;
+    for (k, v) in dist.iter() {
+        if *k == s { continue; }
+        if muximum < *v { muximum = *v; }
+    }
+    return muximum
 }
