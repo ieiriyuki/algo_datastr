@@ -1,9 +1,12 @@
 use std::collections::{HashMap, VecDeque};
 
+use regex::Regex;
+
 fn main() {
     q14_1();
     q14_2();
     q14_3();
+    q14_4();
 }
 
 type DAG = HashMap<usize, Vec<usize>>;
@@ -293,7 +296,6 @@ fn hopscotch(
             if dist[nv][np] == -1 {
                 let dist_i = dist[&v][parity];
                 if let Some(x) = dist.get_mut(nv) {
-                    println!("{}, {}, {:?}", nv, np, x);
                     x[np] = dist_i + 1;
                 }
                 que.push_back((*nv, np));
@@ -351,4 +353,141 @@ fn dikstra(
         if muximum < *v { muximum = *v; }
     }
     return muximum
+}
+
+fn q14_4() {
+    println!("question 14-4");
+    let re = Regex::new(r" ").unwrap();
+    let str_input = "s####
+    ....#
+    #####
+    #...g";
+    let str_input: &str = &re.replace_all(str_input, "");
+    bfs_custom(str_input, 4, 5);
+
+    let str_input = "...s
+    ....
+    ....
+    .g..";
+    let str_input: &str = &re.replace_all(str_input, "");
+    bfs_custom(str_input, 4, 4);
+
+    let str_input = "s.........
+    #########.
+    #.......#.
+    #..####.#.
+    ##....#.#.
+    #####.#.#.
+    g##.#.#.#.
+    ###.#.#.#.
+    ###.#.#.#.
+    #.....#...";
+    let str_input: &str = &re.replace_all(str_input, "");
+    bfs_custom(str_input, 10, 10);
+
+    let str_input = ".....s
+    ###...
+    ###...
+    ######
+    ...###
+    g.####";
+    let str_input: &str = &re.replace_all(str_input, "");
+    bfs_custom(str_input, 6, 6);
+
+    let str_input = "s..####..g";
+    let str_input: &str = &re.replace_all(str_input, "");
+    bfs_custom(str_input, 1, 10);
+}
+
+fn parse_str_to_vec(
+    s: &str,
+    mut field: Vec<Vec<char>>,
+) -> Vec<Vec<char>> {
+    let re = Regex::new(r"\n").unwrap();
+    let temp: Vec<&str> = re.split(s).collect();
+    for (idx, s_i) in temp.iter().enumerate() {
+        let mut j = 0usize;
+        for ch in s_i.chars() {
+            field[idx][j] = ch;
+            j = j + 1;
+            print!("{}", ch);
+        }
+        println!();
+    }
+    field
+}
+
+fn find_x(
+    field: &mut Vec<Vec<char>>,
+) -> (usize, usize, usize, usize) {
+    let mut sx = 0usize;
+    let mut sy = 0usize;
+    let mut gx = 0usize;
+    let mut gy = 0usize;
+
+    for (i, f) in field.iter().enumerate() {
+        for (j, ch) in f.iter().enumerate() {
+            if *ch == 's' {
+                sx = j;
+                sy = i;
+            }
+            if *ch == 'g' {
+                gx = j;
+                gy = i;
+            }
+        }
+    }
+    return (sx, sy, gx, gy)
+}
+
+fn bfs_custom(
+    s: &str,
+    h: usize,
+    w: usize,
+) {
+    let mut field: Vec<Vec<char>> = vec![vec!['N'; w]; h];
+    field = parse_str_to_vec(s, field);
+    let (sx, sy, gx, gy) = find_x(&mut field);
+    println!("{}, {}, {}, {}", sx, sy, gx, gy);
+
+    let directions: Vec<(i32, i32)> = vec![
+        (1, 0), (0, 1), (-1, 0), (0, -1),
+    ];
+
+    let inf: usize = 1 << 30;
+    let mut dist = vec![vec![inf; w]; h];
+    dist[sy][sx] = 0;
+    let mut que = VecDeque::<(usize, usize)>::new();
+    que.push_back((sx, sy));
+
+    while ! que.is_empty() {
+        let (x, y) = que.pop_front().unwrap();
+
+        let mut nx: i32;
+        let mut ny: i32;
+        for (dx, dy) in directions.iter() {
+            nx = (x as i32) + dx;
+            ny = (y as i32) + dy;
+            if nx < 0 || (w as i32) <= nx || ny < 0 || (h as i32) <= ny {
+                continue
+            }
+
+            if field[ny as usize][nx as usize] != '#' {
+                if dist[y][x] < dist[ny as usize][nx as usize] {
+                    dist[ny as usize][nx as usize] = dist[y][x];
+                    que.push_front((nx as usize, ny as usize));
+                }
+            } else {
+                if dist[y][x] + 1 < dist[ny as usize][nx as usize] {
+                    dist[ny as usize][nx as usize] = dist[y][x] + 1;
+                    que.push_back((nx as usize, ny as usize));
+                }
+            }
+        }
+    }
+    if dist[gy][gx] <= 2 {
+        println!("YES");
+    } else {
+        println!("NO");
+    }
 }
