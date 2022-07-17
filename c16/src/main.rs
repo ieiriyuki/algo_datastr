@@ -1,7 +1,9 @@
 use crate::q16_4::create_edges;
+use crate::q16_5::{word2vec, show_field, odds_evens};
 
 mod q16;
 mod q16_4;
+mod q16_5;
 
 fn main() {
     q16_1();
@@ -9,6 +11,7 @@ fn main() {
     // Froid-Warshall and Ford-Fulkerson
     println!("q16_3 skip");
     q16_4();
+    q16_5();
 }
 
 #[allow(unused_variables)]
@@ -235,4 +238,53 @@ fn q16_4() {
         .collect()
     );
     println!("{}", q16::fordfulkerson(&mut g, 0, n + m + 1));
+}
+
+fn q16_5() {
+    println!("question 16-5");
+    println!("imperfect");
+    let r: usize = 3;
+    let c: usize = 3;
+    let d: &str = "...
+    ...
+    ...";
+    let data: Vec<Vec<char>> = word2vec(r, c, d);
+    show_field(&data);
+    let input: Vec<(usize, usize, u32)> = odds_evens(&data);
+    let mut g: q16::Graph = q16::Graph::new(r * c + 2);
+    g.add_all_edge(input);
+    println!("{}", q16::fordfulkerson(&mut g, 0, r * c + 1));
+
+    let r: usize = 2;
+    let c: usize = 2;
+    let d: &str = "**
+    **";
+    let data: Vec<Vec<char>> = word2vec(r, c, d);
+    show_field(&data);
+    let input: Vec<(usize, usize, u32)> = odds_evens(&data);
+    let mut g: q16::Graph = q16::Graph::new(r * c + 2);
+    g.add_all_edge(input);
+    println!("{}", q16::fordfulkerson(&mut g, 0, r * c + 1));
+
+    let r: usize = 1;
+    let c: usize = 1;
+    let d: &str = ".";
+    let data: Vec<Vec<char>> = word2vec(r, c, d);
+    show_field(&data);
+    let input: Vec<(usize, usize, u32)> = odds_evens(&data);
+    let mut g: q16::Graph = q16::Graph::new(r * c + 2);
+    g.add_all_edge(input);
+    println!("{}", q16::fordfulkerson(&mut g, 0, r * c + 1));
+
+    let r: usize = 3;
+    let c: usize = 4;
+    let d: &str = "*..*
+    ..**
+    *...";
+    let data: Vec<Vec<char>> = word2vec(r, c, d);
+    show_field(&data);
+    let input: Vec<(usize, usize, u32)> = odds_evens(&data);
+    let mut g: q16::Graph = q16::Graph::new(r * c + 2);
+    g.add_all_edge(input);
+    println!("{}", q16::fordfulkerson(&mut g, 0, r * c + 1));
 }
