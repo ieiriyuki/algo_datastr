@@ -1,9 +1,11 @@
 use crate::q16_4::create_edges;
 use crate::q16_5::{word2vec, show_field, odds_evens};
+use crate::q16_6::{FordFulkerson};
 
 mod q16;
 mod q16_4;
 mod q16_5;
+mod q16_6;
 
 fn main() {
     q16_1();
@@ -12,6 +14,7 @@ fn main() {
     println!("q16_3 skip");
     q16_4();
     q16_5();
+    q16_6();
 }
 
 #[allow(unused_variables)]
@@ -287,4 +290,42 @@ fn q16_5() {
     let mut g: q16::Graph = q16::Graph::new(r * c + 2);
     g.add_all_edge(input);
     println!("{}", q16::fordfulkerson(&mut g, 0, r * c + 1));
+}
+
+fn q16_6() {
+    println!("question 16-6");
+    let n: usize = 6;
+    let a: Vec<isize> = vec![1, 2, -6, 4, 5, 3];
+    let mut ff = FordFulkerson::new(n + 2);
+    let mut sum: isize = 0;
+    (sum, ff) = run(n, &a, &mut ff);
+    let ans: isize = sum - ff.max_flow(0, n + 1);
+    println!("{}", ans);
+
+    let n: usize = 6;
+    let a: Vec<isize> = vec![100, -100, -100, -100, 100, -100];
+    let mut ff = FordFulkerson::new(n + 2);
+    let mut sum: isize = 0;
+    (sum, ff) = run(n, &a, &mut ff);
+    let ans: isize = sum - ff.max_flow(0, n + 1);
+    println!("{}", ans);
+}
+
+fn run(n: usize, a: &Vec<isize>, ff: &mut FordFulkerson) -> (isize, FordFulkerson) {
+    let mut sum: isize = 0;
+    for i in 1..=n {
+        if a[i - 1] > 0 {
+            sum += a[i - 1];
+            ff.add_edge(i, n + 1, a[i - 1]);
+        } else {
+            ff.add_edge(0, i, -a[i - 1]);
+        }
+        for j in 2..=(n / i) {
+            let baisu: usize = i * j;
+            if a[baisu - 1] > 0 {
+                ff.add_edge(i, baisu, a[baisu - 1]);
+            }
+        }
+    }
+    (sum, ff.clone())
 }
