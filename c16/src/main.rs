@@ -1,8 +1,10 @@
 mod q16;
+mod q16_3;
 
 fn main() {
     q16_1();
     //q16_2();
+    // Froid-Warshall and Ford-Fulkerson
 }
 
 #[allow(unused_variables)]
@@ -85,3 +87,8 @@ fn q16_1() {
     g.add_all_edge(winput);
     println!("{}", q16::fordfulkerson(&mut g, 0, n));
 }
+
+fn q16_2() {
+    //
+}
+
